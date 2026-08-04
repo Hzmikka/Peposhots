@@ -1,0 +1,2 @@
+import styles from "./BookingQuiz.module.css";
+export function BookingQuizProgress({step,total}:{step:number;total:number}){const value=Math.round(((step+1)/total)*100);return <div className={styles.progressWrap}><span>Paso {step+1} de {total}</span><div className={styles.progress} role="progressbar" aria-valuenow={step+1} aria-valuemin={1} aria-valuemax={total}><i style={{width:`${value}%`}}/></div></div>}

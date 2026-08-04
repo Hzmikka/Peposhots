@@ -1,0 +1,271 @@
+.section {
+  --ink: #111411;
+  --lime: #5dd62c;
+  --deep-green: #337418;
+  position: relative;
+  z-index: 3;
+  padding: clamp(4.5rem, 8vw, 8rem) clamp(1rem, 3vw, 2rem);
+  padding-bottom: 0;
+  overflow: visible;
+  clip-path: inset(-10rem 0 -10rem 0);
+  background: #f7f8f5;
+  color: var(--ink);
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1220px);
+  margin-inline: auto;
+}
+
+.leaf {
+  position: absolute;
+  z-index: 2;
+  width: clamp(105px, 16vw, 185px);
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+
+.leafCardsLeft { top: 43%; left: -3.2rem; transform: rotate(-24deg); }
+.leafBottom { left: 53%; bottom: -8.5rem; width: clamp(250px, 33vw, 400px); transform: rotate(-8deg) scaleX(-1); }
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: clamp(1.8rem, 3vw, 3rem);
+}
+
+.eyebrow {
+  margin: 0 0 .6rem;
+  color: var(--deep-green);
+  font-size: .73rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.header h2 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(2.25rem, 5vw, 4.8rem);
+  line-height: .95;
+  letter-spacing: -.055em;
+  text-transform: uppercase;
+}
+
+.allEventsLink {
+  width: 3.2rem;
+  height: 3.2rem;
+  display: grid;
+  border: 0;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--lime);
+  color: #10220a;
+  font-size: 1.15rem;
+  font-weight: 900;
+  text-decoration: none;
+  box-shadow: 0 10px 22px rgba(51, 116, 24, .2);
+  transition: transform 240ms ease, box-shadow 240ms ease;
+}
+
+.allEventsLink:hover {
+  transform: translateY(-2px) rotate(4deg);
+  box-shadow: 0 14px 28px rgba(51, 116, 24, .26);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "featured featured"
+    "wedding birthday"
+    "wedding graduation";
+  grid-template-rows: auto repeat(2, clamp(118px, 12vw, 180px));
+  gap: clamp(1rem, 2vw, 1.5rem);
+}
+
+.card {
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  display: block;
+  border: 0;
+  padding: 0;
+  text-align: left;
+  overflow: hidden;
+  border-radius: clamp(22px, 2.2vw, 28px);
+  background: #d8ddd3;
+  color: var(--ink);
+  text-decoration: none;
+  isolation: isolate;
+  transition: transform 250ms ease;
+}
+
+.featured {
+  grid-area: featured;
+  aspect-ratio: 2 / 1;
+}
+
+.card:nth-child(2) { grid-area: wedding; }
+.card:nth-child(3) { grid-area: birthday; }
+.card:nth-child(4) { grid-area: graduation; }
+
+.image {
+  object-fit: cover;
+  transition: transform 250ms ease;
+}
+
+.card:hover .image,
+.card:focus-visible .image {
+  transform: scale(1.025);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: 4px;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 20%;
+  background: linear-gradient(
+    to top,
+    rgba(8, 12, 8, .72) 0%,
+    rgba(8, 12, 8, .34) 22%,
+    transparent 100%
+  );
+  backdrop-filter: blur(22px) saturate(112%);
+  -webkit-backdrop-filter: blur(22px) saturate(112%);
+  mask-image: linear-gradient(to top, #000 0%, #000 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, #000 0%, #000 70%, transparent 100%);
+  pointer-events: none;
+}
+
+.glassLabel {
+  position: absolute;
+  right: clamp(12px, 1.3vw, 16px);
+  bottom: clamp(12px, 1.3vw, 16px);
+  left: clamp(12px, 1.3vw, 16px);
+  z-index: 2;
+  display: grid;
+  gap: .18rem;
+  padding: clamp(.18rem, .4vw, .32rem);
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, .42);
+}
+
+.labelHeading {
+  display: flex;
+  align-items: center;
+  color: var(--lime);
+  font-size: clamp(.54rem, .8vw, .68rem);
+  font-weight: 850;
+  letter-spacing: .08em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.glassLabel strong {
+  font-size: clamp(.66rem, 1vw, .88rem);
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: 0;
+  white-space: normal;
+  text-transform: uppercase;
+}
+
+.glassLabel small {
+  color: rgba(255, 255, 255, .82);
+  font-size: clamp(.54rem, .75vw, .66rem);
+  font-weight: 400;
+  line-height: 1.15;
+  white-space: normal;
+}
+
+@media (max-width: 760px) {
+  .section {
+    padding: 4rem .85rem;
+  }
+
+  .header {
+    align-items: flex-end;
+    gap: 1rem;
+  }
+
+  .header h2 {
+    font-size: clamp(2rem, 10vw, 3.2rem);
+  }
+
+  .allEventsLink {
+    width: 2.8rem;
+    height: 2.8rem;
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "featured featured"
+      "wedding birthday"
+      "wedding graduation";
+    grid-template-rows: auto repeat(2, clamp(118px, 34vw, 180px));
+    gap: .6rem;
+  }
+
+  .card {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+    border-radius: 16px;
+  }
+
+  .featured {
+    height: auto;
+    aspect-ratio: 16 / 8;
+  }
+
+  .glassLabel {
+    right: 7px;
+    bottom: 7px;
+    left: 7px;
+    gap: .12rem;
+    padding: .15rem;
+  }
+
+  .glassLabel strong {
+    font-size: clamp(.46rem, 1.75vw, .66rem);
+    line-height: 1.08;
+  }
+
+  .glassLabel small {
+    display: none;
+  }
+
+  .labelHeading {
+    font-size: clamp(.42rem, 1.65vw, .58rem);
+  }
+
+  .leaf { width: 90px; }
+  .leafCardsLeft { display: none; }
+  .leafBottom { bottom: -5.5rem; width: 250px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .image,
+  .allEventsLink {
+    transition: none;
+  }
+}
