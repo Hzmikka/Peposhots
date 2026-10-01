@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { deliverReviewEmail } from "@/lib/bookingDelivery";
+import { classifyMailFailure, deliverReviewEmail } from "@/lib/bookingDelivery";
 import { contentLengthWithin, rateLimit } from "@/lib/requestGuard";
 
 export const runtime = "nodejs";
@@ -9,6 +9,13 @@ const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp", "ima
 function text(form: FormData, key: string, max: number) {
   const value = form.get(key);
   return typeof value === "string" ? value.trim().slice(0, max) : "";
+}
+
+function mailFailureMessage(code: ReturnType<typeof classifyMailFailure>["code"]) {
+  if (code === "EMAIL_CONFIG_MISSING") return "El correo del sitio no está configurado correctamente. Código: EMAIL_CONFIG_MISSING.";
+  if (code === "EMAIL_AUTH_FAILED") return "Gmail rechazó las credenciales del sitio. Código: EMAIL_AUTH_FAILED.";
+  if (code === "EMAIL_CONNECTION_FAILED") return "No pudimos conectar con Gmail. Código: EMAIL_CONNECTION_FAILED.";
+  return "No pudimos enviar la reseña. Código: EMAIL_SEND_FAILED.";
 }
 
 export async function POST(request: Request) {
@@ -56,7 +63,9 @@ export async function POST(request: Request) {
 
     const delivery = await deliverReviewEmail({ name, email, eventType, text: reviewText, rating, attachment });
     return NextResponse.json({ ok: true, simulated: delivery.simulated });
-  } catch {
-    return NextResponse.json({ message: "No pudimos enviar la reseña. Intenta de nuevo." }, { status: 503 });
+  } catch (error) {
+    const failure = classifyMailFailure(error);
+    console.error("[PepoShots review email]", failure.log);
+    return NextResponse.json({ message: mailFailureMessage(failure.code), code: failure.code }, { status: 503 });
   }
 }
