@@ -20,10 +20,9 @@ function getMailConfig() {
   const pass = (process.env.GMAIL_APP_PASSWORD || "").replace(/\s+/g, "");
 
   if (!user || !to || !pass) {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("Email delivery is not configured. Set EMAIL_FROM, EMAIL_TO and GMAIL_APP_PASSWORD in Vercel.");
-    }
-    return null;
+    const error = new Error("Email delivery is not configured.");
+    (error as Error & { code?: string }).code = "EMAIL_CONFIG_MISSING";
+    throw error;
   }
 
   return { user, to, pass };
@@ -31,12 +30,60 @@ function getMailConfig() {
 
 function getTransporter(config: { user: string; pass: string }) {
   return nodemailer.createTransport({
-    service: "gmail",
-    auth: config,
-    connectionTimeout: 10_000,
-    greetingTimeout: 10_000,
-    socketTimeout: 20_000,
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: config.user,
+      pass: config.pass,
+    },
+    connectionTimeout: 12_000,
+    greetingTimeout: 12_000,
+    socketTimeout: 25_000,
   });
+}
+
+export type SafeMailFailure = {
+  code: "EMAIL_CONFIG_MISSING" | "EMAIL_AUTH_FAILED" | "EMAIL_CONNECTION_FAILED" | "EMAIL_SEND_FAILED";
+  log: Record<string, string | number | undefined>;
+};
+
+export function classifyMailFailure(error: unknown): SafeMailFailure {
+  const value = (error && typeof error === "object" ? error : {}) as {
+    code?: string;
+    command?: string;
+    responseCode?: number;
+    message?: string;
+  };
+
+  const rawCode = typeof value.code === "string" ? value.code : "";
+  const responseCode = typeof value.responseCode === "number" ? value.responseCode : undefined;
+
+  if (rawCode === "EMAIL_CONFIG_MISSING") {
+    return {
+      code: "EMAIL_CONFIG_MISSING",
+      log: { code: rawCode, command: value.command, responseCode },
+    };
+  }
+
+  if (rawCode === "EAUTH" || responseCode === 535) {
+    return {
+      code: "EMAIL_AUTH_FAILED",
+      log: { code: rawCode, command: value.command, responseCode },
+    };
+  }
+
+  if (["ETIMEDOUT", "ECONNECTION", "ESOCKET", "ECONNREFUSED", "ENETUNREACH"].includes(rawCode)) {
+    return {
+      code: "EMAIL_CONNECTION_FAILED",
+      log: { code: rawCode, command: value.command, responseCode },
+    };
+  }
+
+  return {
+    code: "EMAIL_SEND_FAILED",
+    log: { code: rawCode || undefined, command: value.command, responseCode },
+  };
 }
 
 function subjectLine(data: BookingInquiryInput) {
@@ -112,9 +159,8 @@ function htmlBody(data: BookingInquiryInput) {
 
 export async function deliverBookingEmail(data: BookingInquiryInput) {
   const config = getMailConfig();
-  if (!config) return { delivered: false, simulated: true };
-
   const transporter = getTransporter(config);
+
   await transporter.sendMail({
     from: `"PepoShots Website" <${config.user}>`,
     to: config.to,
@@ -136,9 +182,8 @@ export async function deliverReviewEmail(data: {
   attachment?: { filename: string; content: Buffer; contentType?: string };
 }) {
   const config = getMailConfig();
-  if (!config) return { delivered: false, simulated: true };
-
   const transporter = getTransporter(config);
+
   await transporter.sendMail({
     from: `"PepoShots Website" <${config.user}>`,
     to: config.to,
