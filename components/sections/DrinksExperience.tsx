@@ -41,6 +41,8 @@ export function DrinksExperience() {
   const [dragOffset, setDragOffset] = useState(0);
   const [drinkDrag, setDrinkDrag] = useState<DrinkDrag | null>(null);
   const [trayReady, setTrayReady] = useState(false);
+  const [removingDrinkId, setRemovingDrinkId] = useState<string | null>(null);
+  const lastTrayTap = useRef<{ id: string; time: number } | null>(null);
   const swipeStart = useRef<number | null>(null);
   const drinkPointerStart = useRef<{ x: number; y: number } | null>(null);
   const drinkSourceRef = useRef<Pick<DrinkDrag, "id" | "image" | "rect"> | null>(null);
@@ -51,6 +53,25 @@ export function DrinksExperience() {
   const { preferences, setExploredDrink, setFavoriteDrinks } = usePepoExperience();
   const favoriteCocktails = preferences.favoriteDrinks ?? [];
   const active = drinks[activeIndex];
+
+  function showTrayDrinkOptions(id: string, clickDetail: number) {
+    const time = performance.now();
+    const previousTap = lastTrayTap.current;
+    // Touch clicks don't reliably report a double-click count across browsers.
+    if (clickDetail === 0 || (previousTap?.id === id && time - previousTap.time <= 450)) {
+      setRemovingDrinkId(id);
+      lastTrayTap.current = null;
+      return;
+    }
+    lastTrayTap.current = { id, time };
+    if (removingDrinkId !== id) setRemovingDrinkId(null);
+  }
+
+  function removeTrayDrink(id: string) {
+    setFavoriteDrinks((items) => items.filter((item) => item !== id));
+    setRemovingDrinkId(null);
+    lastTrayTap.current = null;
+  }
 
   function select(index: number) {
     const normalized = (index + drinks.length) % drinks.length;
@@ -227,7 +248,22 @@ export function DrinksExperience() {
   }
 
   return (
-    <section className="section section-drinks" id="drinks">
+    <section
+      className="section section-drinks"
+      id="drinks"
+      onPointerDownCapture={(event) => {
+        if (event.target instanceof Element && !event.target.closest(".tray-drink")) {
+          setRemovingDrinkId(null);
+          lastTrayTap.current = null;
+        }
+      }}
+      onKeyDown={(event) => {
+        if (event.key === "Escape") {
+          setRemovingDrinkId(null);
+          lastTrayTap.current = null;
+        }
+      }}
+    >
       <Container>
         <div
           className="cocktail-editorial-carousel"
@@ -327,11 +363,31 @@ export function DrinksExperience() {
                     left: `${placement.x}%`,
                     bottom: `${placement.bottom}%`,
                     width: `${placement.width}%`,
-                    zIndex: placement.z,
+                    zIndex: removingDrinkId === id ? 10 : placement.z,
                     transform: `translateX(-50%) rotate(${placement.rotate}deg)`,
                   }}
                 >
-                  <Image src={drink.drinkImage} alt={drink.name || "Cóctel favorito"} fill sizes="150px" />
+                  <Image src={drink.drinkImage} alt={drink.name || "Cóctel favorito"} fill sizes="150px" draggable={false} />
+                  <button
+                    type="button"
+                    className="tray-drink-select"
+                    aria-label={`Mostrar botón para quitar ${drink.name || "este cóctel"}`}
+                    aria-expanded={removingDrinkId === id}
+                    title="Toca dos veces para mostrar el botón de quitar"
+                    onClick={(event) => showTrayDrinkOptions(id, event.detail)}
+                  />
+                  {removingDrinkId === id ? (
+                    <button
+                      type="button"
+                      className="tray-drink-remove"
+                      aria-label={`Quitar ${drink.name || "este cóctel"} de favoritos`}
+                      onClick={() => removeTrayDrink(id)}
+                    >
+                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                        <path d="M4 4L14 14M14 4L4 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
+                    </button>
+                  ) : null}
                 </span>
               );
             })}

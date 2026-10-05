@@ -307,7 +307,13 @@ img { max-width: 100%; }
 .drinks-tray > img { position: relative; z-index: 1; display: block; width: 100%; height: auto; object-fit: contain; pointer-events: none; }
 .drinks-tray-items { position: absolute; inset: 0; z-index: 2; pointer-events: none; transform: translateY(-20%); }
 .tray-drink { position: absolute; height: 68%; transform-origin: center bottom; transition: left .28s ease, bottom .28s ease, width .28s ease, transform .28s ease; }
-.tray-drink img { object-fit: contain; object-position: center bottom; }
+.tray-drink img { object-fit: contain; object-position: center bottom; pointer-events: none; -webkit-user-drag: none; }
+/* Keep hit areas on each glass so overlapping transparent image margins don't block its neighbors. */
+.tray-drink-select { position: absolute; inset: 0 25%; z-index: 1; padding: 0; border: 0; border-radius: 12px; background: transparent; cursor: pointer; pointer-events: auto; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+.tray-drink-remove { position: absolute; top: 6%; right: 12%; z-index: 2; display: grid; width: 44px; height: 44px; place-items: center; padding: 0; border: 1px solid rgba(9,71,53,.2); border-radius: 50%; background: #CEF17B; color: #094735; cursor: pointer; pointer-events: auto; touch-action: manipulation; box-shadow: 0 2px 8px rgba(8,14,9,.12); }
+.tray-drink-remove:hover { background: #CEECB3; }
+.tray-drink-select:focus-visible,
+.tray-drink-remove:focus-visible { outline: 2px solid #094735; outline-offset: 3px; }
 .tray-more { position: absolute; right: 12%; bottom: 22%; z-index: 8; display: grid; min-width: 28px; height: 28px; place-items: center; padding-inline: 7px; border-radius: 99px; background: rgba(9,71,53,.9); color: #FFF; font: 800 .62rem/1 Inter, var(--font-inter-web), ui-sans-serif, system-ui, sans-serif; }
 .drink-drag-ghost { position: fixed; z-index: 10000; transform-origin: center; pointer-events: none; will-change: transform; filter: drop-shadow(0 8px 10px rgba(8,14,9,.16)); }
 .drink-drag-ghost.is-settling { transition: transform .32s cubic-bezier(.22,.75,.18,1); }
