@@ -6,6 +6,8 @@ import { eventPaths } from "@/data/eventPaths";
 import { usePepoExperience } from "@/components/peposhots/PepoExperienceContext";
 import { getElementTop, getScrollContainer, getScrollHeight, getScrollTop, getViewportHeight, scrollToPosition, setScrollTop } from "@/lib/scrolling";
 
+const servicePackages = eventPaths.filter((path) => path.price !== null);
+
 export function EventPaths() {
   const { preferences, setEventPath } = usePepoExperience();
 
@@ -59,11 +61,14 @@ export function EventPaths() {
             <p className="kicker">SERVICIO POR INVITADOS</p>
             <h2>¿Cuántos invitados tendrás?</h2>
           </div>
-          <p>Encuentra el servicio que encaja con el tamaño de tu celebración y conoce el precio antes de consultar.</p>
+          <div>
+            <p className="path-intro-copy">Encuentra el servicio que encaja con el tamaño de tu celebración y conoce el precio antes de consultar.</p>
+            <p className="path-service-note">Hasta 4 horas de servicio. Montaje previo: 30 minutos adicionales.</p>
+          </div>
         </header>
 
         <div className="path-grid">
-          {eventPaths.map((path) => {
+          {servicePackages.map((path) => {
             const selected = preferences.eventPath === path.id;
             return (
               <button
@@ -91,7 +96,6 @@ export function EventPaths() {
             );
           })}
         </div>
-        <p className="path-service-note">Hasta 4 horas de servicio. Montaje previo: 30 minutos adicionales.</p>
       </Container>
     </section>
   );
