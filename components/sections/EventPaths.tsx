@@ -56,10 +56,10 @@ export function EventPaths() {
       <Container>
         <header className="section-head split-head">
           <div>
-            <p className="kicker">TU TIPO DE EVENTO</p>
-            <h2>¿Se parece a lo que estás organizando?</h2>
+            <p className="kicker">SERVICIO POR INVITADOS</p>
+            <h2>¿Cuántos invitados tendrás?</h2>
           </div>
-          <p>Elige el contexto más cercano y te mostramos la opción que mejor encaja.</p>
+          <p>Encuentra el servicio que encaja con el tamaño de tu celebración y conoce el precio antes de consultar.</p>
         </header>
 
         <div className="path-grid">
@@ -78,6 +78,9 @@ export function EventPaths() {
                 </span>
                 <span className="path-body">
                   <span className="path-label">{path.label}</span>
+                  <span className={`path-price${path.price === null ? " is-custom" : ""}`}>
+                    {path.price === null ? "Cotización personalizada" : `$${path.price.toLocaleString("en-US")}`}
+                  </span>
                   <strong>{path.title}</strong>
                   <span className="path-meta">
                     {path.meta.map((item) => <span key={item}>{item}</span>)}
@@ -88,7 +91,7 @@ export function EventPaths() {
             );
           })}
         </div>
-
+        <p className="path-service-note">Hasta 4 horas de servicio. Montaje previo: 30 minutos adicionales.</p>
       </Container>
     </section>
   );

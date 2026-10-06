@@ -109,7 +109,7 @@ function textBody(data: BookingInquiryInput) {
     `Tragos favoritos: ${data.favoriteDrinks?.join(", ") || "—"}`,
     "",
     "Contexto guardado por la web:",
-    `Tipo de evento elegido: ${data.context?.eventPath || "—"}`,
+    `Rango de invitados elegido: ${data.context?.eventPath || "—"}`,
     `Bar setup preferido: ${data.context?.preferredBarSetup || "—"}`,
     `Trago explorado: ${data.context?.exploredDrink || "—"}`,
     "",

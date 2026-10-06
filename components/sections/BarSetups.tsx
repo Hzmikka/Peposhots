@@ -24,6 +24,7 @@ export function BarSetups() {
   const ordered = useMemo(() => {
     if (!preferences.eventPath) return barSetups;
     const priority = barPriorityByPath[preferences.eventPath];
+    if (!priority) return barSetups;
     return [...barSetups].sort((a, b) => priority.indexOf(a.id) - priority.indexOf(b.id));
   }, [preferences.eventPath]);
 
@@ -95,7 +96,7 @@ export function BarSetups() {
           <p className="kicker">BAR SETUPS</p>
           <h2>Una barra que funcione para tu evento.</h2>
           <p>Explora las opciones y encuentra la que mejor encaje.</p>
-          {preferences.eventPath ? <small className="bar-context">Ordenadas según tu celebración.</small> : null}
+          {preferences.eventPath && barPriorityByPath[preferences.eventPath] ? <small className="bar-context">Ordenadas según el tamaño de tu evento.</small> : null}
         </header>
 
         <div className="bar-deck" aria-label="Deck de opciones de barra">
@@ -131,7 +132,7 @@ export function BarSetups() {
         </div>
 
         <div className="stationary-bar-info" aria-live="polite">
-          {activeIndex === 0 && preferences.eventPath ? <span className="bar-recommendation">MEJOR ENCAJE</span> : null}
+          {activeIndex === 0 && preferences.eventPath && barPriorityByPath[preferences.eventPath] ? <span className="bar-recommendation">MEJOR ENCAJE</span> : null}
           <span className="bar-index">{String(activeIndex + 1).padStart(2, "0")}</span>
           <h3>{active.title}</h3>
           <p>{active.description}</p>

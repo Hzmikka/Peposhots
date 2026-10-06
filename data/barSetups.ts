@@ -47,8 +47,9 @@ export const barSetups: BarSetup[] = [
 ];
 
 export const barPriorityByPath: Record<EventPathId, string[]> = {
-  wedding: ["classic-white", "venue", "signature-dark", "outdoor-mobile", "compact-white"],
-  graduation: ["venue", "classic-white", "compact-white", "signature-dark", "outdoor-mobile"],
-  "private-party": ["compact-white", "signature-dark", "outdoor-mobile", "venue", "classic-white"],
-  corporate: ["venue", "signature-dark", "classic-white", "compact-white", "outdoor-mobile"]
+  "up-to-50": ["compact-white", "venue", "classic-white", "signature-dark", "outdoor-mobile"],
+  "51-100": ["venue", "classic-white", "signature-dark", "outdoor-mobile", "compact-white"],
+  "101-150": ["venue", "classic-white", "signature-dark", "outdoor-mobile", "compact-white"],
+  "151-200": ["venue", "classic-white", "signature-dark", "outdoor-mobile", "compact-white"],
+  "over-200": ["venue", "classic-white", "signature-dark", "outdoor-mobile", "compact-white"]
 };

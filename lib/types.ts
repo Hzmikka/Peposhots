@@ -1,4 +1,4 @@
-export type EventPathId = "wedding" | "graduation" | "private-party" | "corporate";
+export type EventPathId = "up-to-50" | "51-100" | "101-150" | "151-200" | "over-200";
 
 export type BusinessConfig = {
   name: string;

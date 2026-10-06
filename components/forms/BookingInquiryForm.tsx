@@ -31,7 +31,7 @@ function preferenceValues(preferences: PepoPreferences): Partial<BookingFields> 
   const event = eventPaths.find((item) => item.id === preferences.eventPath);
   const selectedBar = barSetups.find((item) => item.id === preferences.preferredBarSetup);
   return {
-    eventType: event?.label ?? "",
+    guestRange: event?.label ?? "",
     location: preferences.location ?? "",
     serviceNeeded: selectedBar ? "Bartender" : "",
     venueHasBar: selectedBar?.id === "venue" ? "Sí" : selectedBar ? "No" : "",
@@ -158,7 +158,7 @@ export function BookingInquiryForm() {
             <div className="booking-form-grid">
               <label>Fecha del evento<input name="eventDate" value={fields.eventDate} onChange={updateField} type="date" min={minDate} required aria-invalid={Boolean(errors.eventDate)} />{fieldError("eventDate")}</label>
               <label>Tipo de evento<select name="eventType" value={fields.eventType} onChange={updateField} required><option value="" disabled>Selecciona</option><option>BODA / FORMAL</option><option>GRADUACIÓN</option><option>CUMPLEAÑOS / PRIVADO</option><option>CORPORATIVO</option><option>Otro</option></select>{fieldError("eventType")}</label>
-              <label>Invitados aproximados<select name="guestRange" value={fields.guestRange} onChange={updateField} required><option value="" disabled>Selecciona</option><option>Menos de 50</option><option>50–100</option><option>101–200</option><option>200+</option><option>Aún no sé</option></select>{fieldError("guestRange")}</label>
+              <label>Invitados aproximados<select name="guestRange" value={fields.guestRange} onChange={updateField} required><option value="" disabled>Selecciona</option>{eventPaths.map((path) => <option key={path.id}>{path.label}</option>)}<option>Aún no sé</option></select>{fieldError("guestRange")}</label>
               <label>Ciudad o ZIP<input name="location" value={fields.location} onChange={updateField} required placeholder="Miami Beach, 33139…" aria-invalid={Boolean(errors.location)} />{fieldError("location")}</label>
             </div>
             <div className="booking-actions is-single"><button type="button" className="booking-next" onClick={nextStep}>Siguiente →</button></div>
