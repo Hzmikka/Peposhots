@@ -1,56 +1,38 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 import { Container } from "@/components/ui/Container";
 import { eventPaths } from "@/data/eventPaths";
 import { usePepoExperience } from "@/components/peposhots/PepoExperienceContext";
-import { getElementTop, getScrollContainer, getScrollHeight, getScrollTop, getViewportHeight, scrollToPosition, setScrollTop } from "@/lib/scrolling";
+import { animateScrollTo, getElementTop, getScrollContainer, getScrollHeight, getViewportHeight } from "@/lib/scrolling";
 
 const servicePackages = eventPaths;
 
 export function EventPaths() {
   const { preferences, setEventPath } = usePepoExperience();
+  const cancelScroll = useRef<(() => void) | null>(null);
+  useEffect(() => () => cancelScroll.current?.(), []);
 
   function choose(id: typeof eventPaths[number]["id"]) {
     setEventPath(id);
-    window.setTimeout(() => {
-      const paths = document.getElementById("event-paths");
-      const bars = document.getElementById("bar-setups");
-      const scene = paths?.closest<HTMLElement>(".path-bars-scene");
-      const scrollRoot = getScrollContainer(paths);
-      if (!paths || !bars || !scene) return;
+    cancelScroll.current?.();
+    const paths = document.getElementById("event-paths");
+    const bars = document.getElementById("bar-setups");
+    const scrollRoot = getScrollContainer(paths);
+    if (!paths || !bars) return;
 
-      const barsTop = getElementTop(bars, scrollRoot);
-      const safeTop = scrollRoot ? 52 : 12;
-      const target = Math.max(
-        0,
-        Math.min(
-          getScrollHeight(scrollRoot) - getViewportHeight(scrollRoot),
-          barsTop - safeTop,
-        ),
-      );
+    const barsTop = getElementTop(bars, scrollRoot);
+    const safeTop = scrollRoot ? 52 : 12;
+    const target = Math.max(
+      0,
+      Math.min(
+        getScrollHeight(scrollRoot) - getViewportHeight(scrollRoot),
+        barsTop - safeTop,
+      ),
+    );
 
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        scrollToPosition(scrollRoot, target, "auto");
-        return;
-      }
-
-      const start = getScrollTop(scrollRoot);
-      const distance = target - start;
-      const duration = Math.min(1050, Math.max(500, Math.abs(distance) * 0.65));
-      const startedAt = performance.now();
-
-      const step = (now: number) => {
-        const progress = Math.min(1, (now - startedAt) / duration);
-        const eased = progress < 0.5
-          ? 4 * progress * progress * progress
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-        setScrollTop(scrollRoot, start + distance * eased);
-        if (progress < 1) window.requestAnimationFrame(step);
-      };
-
-      window.requestAnimationFrame(step);
-    }, 40);
+    cancelScroll.current = animateScrollTo(scrollRoot, target);
   }
 
   return (

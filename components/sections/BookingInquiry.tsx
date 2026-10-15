@@ -4,59 +4,61 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { BookingInquiryForm } from "@/components/forms/BookingInquiryForm";
-import { addScrollListener, getScrollContainer } from "@/lib/scrolling";
+import { addScrollListener, getScrollContainer, getVisibleBounds } from "@/lib/scrolling";
 import { business } from "@/data/business";
-
-const trayBottomTransparentRatio = 156 / 1024;
-const bookingSettleLead = 72;
-const bookingSceneLift = 72;
 
 export function BookingInquiry() {
   const phone = business.contact.phone || "+17866067684";
   const email = business.contact.email || "peposchots5@gmail.com";
   const toolsRef = useRef<HTMLDivElement>(null);
-  const [toolsSettled, setToolsSettled] = useState(false);
+  // The server-rendered form stays usable even if animation setup fails.
+  const [phase, setPhase] = useState<"static" | "pending" | "settled">("static");
 
   useEffect(() => {
-    if (toolsSettled) return;
+    const tools = toolsRef.current;
+    const card = tools?.querySelector<HTMLElement>(".tray-service-card");
+    if (!tools || !card) return;
     let frame = 0;
-    const scroller = getScrollContainer(toolsRef.current ?? null);
+    let settled = false;
+    const scroller = getScrollContainer(tools);
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const reveal = () => {
+      settled = true;
+      setPhase("settled");
+    };
+    const measure = () => {
+      frame = 0;
+      const bounds = getVisibleBounds(scroller);
+      const rect = card.getBoundingClientRect();
+      if (motion.matches || card.contains(document.activeElement) || window.location.hash === "#booking-form"
+        || rect.top <= bounds.bottom - Math.min(80, (bounds.bottom - bounds.top) * 0.15)) reveal();
+      else if (!settled) setPhase("pending");
+    };
     const checkPosition = () => {
-      window.cancelAnimationFrame(frame);
-      frame = window.requestAnimationFrame(() => {
-        const tray = toolsRef.current?.querySelector<HTMLImageElement>("img:last-of-type");
-        if (!tray) return;
-        const trayRect = tray.getBoundingClientRect();
-        const visibleTrayBottom = trayRect.bottom - trayRect.height * trayBottomTransparentRatio;
-        const shell = toolsRef.current?.closest<HTMLElement>(".page-shell");
-        const stickyCta = shell?.querySelector<HTMLElement>(".mobile-sticky-cta");
-        const triggerLine = stickyCta?.getBoundingClientRect().top ?? scroller?.getBoundingClientRect().bottom ?? window.innerHeight;
-        // The live artwork is lifted visually by the same amount below. Compensate here so
-        // the already-approved settle timing does not become another 72px earlier by accident.
-        const visualLiftCompensation = shell?.classList.contains("is-live") ? bookingSceneLift : 0;
-        if (visibleTrayBottom <= triggerLine + 32 + bookingSettleLead - visualLiftCompensation) setToolsSettled(true);
-      });
+      if (!frame) frame = window.requestAnimationFrame(measure);
     };
     checkPosition();
-    const tray = toolsRef.current?.querySelector<HTMLImageElement>("img:last-of-type");
-    tray?.addEventListener("load", checkPosition);
     const removeScrollListener = addScrollListener(scroller, checkPosition);
     const resizeObserver = new ResizeObserver(checkPosition);
-    if (toolsRef.current) resizeObserver.observe(toolsRef.current);
-    if (tray) resizeObserver.observe(tray);
+    resizeObserver.observe(tools);
+    card.addEventListener("focusin", reveal);
+    window.addEventListener("hashchange", checkPosition);
+    motion.addEventListener("change", checkPosition);
     window.addEventListener("resize", checkPosition);
     window.visualViewport?.addEventListener("resize", checkPosition);
     window.visualViewport?.addEventListener("scroll", checkPosition);
     return () => {
       window.cancelAnimationFrame(frame);
-      tray?.removeEventListener("load", checkPosition);
+      card.removeEventListener("focusin", reveal);
+      window.removeEventListener("hashchange", checkPosition);
+      motion.removeEventListener("change", checkPosition);
       resizeObserver.disconnect();
       removeScrollListener();
       window.removeEventListener("resize", checkPosition);
       window.visualViewport?.removeEventListener("resize", checkPosition);
       window.visualViewport?.removeEventListener("scroll", checkPosition);
     };
-  }, [toolsSettled]);
+  }, []);
 
   return (
     <section className="section section-booking" id="booking">
@@ -78,10 +80,13 @@ export function BookingInquiry() {
               <a href={`mailto:${email}`}>Email</a>
               <a className="direct-contact-whatsapp" href={`https://wa.me/${phone.replace(/\D/g, "")}`} target="_blank" rel="noreferrer">WhatsApp · Recomendado</a>
             </div>
-            <div ref={toolsRef} className={`direct-contact-tools${toolsSettled ? " is-settled" : ""}`}>
+            <a className="booking-form-link" href="#booking-form" onClick={() => setPhase("settled")}>Ir al formulario ↓</a>
+            <div ref={toolsRef} className={`direct-contact-tools ${phase === "pending" ? "is-pending" : "is-settled"}`}>
+              <div className="booking-artwork" aria-hidden="true">
               <Image src="/images/peposhots/booking/coctelera-martini.webp" alt="" width={596} height={1064} sizes="(max-width: 400px) 90vw, 360px" />
               <Image src="/images/peposhots/booking/bandeja.webp" alt="" width={596} height={1064} sizes="(max-width: 400px) 90vw, 360px" />
-              <div className="tray-service-card">
+              </div>
+              <div className="tray-service-card" id="booking-form">
                 <BookingInquiryForm />
               </div>
             </div>

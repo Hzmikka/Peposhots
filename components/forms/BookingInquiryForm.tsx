@@ -6,6 +6,7 @@ import { BookingConfirmation, type SubmittedEventSummary } from "@/components/bo
 import { barSetups } from "@/data/barSetups";
 import { drinks } from "@/data/drinks";
 import { eventPaths } from "@/data/eventPaths";
+import { getScrollContainer, getScrollScale, getScrollTop, getVisibleBounds, setScrollTop } from "@/lib/scrolling";
 
 type Status = "idle" | "submitting" | "success" | "error";
 type FieldErrors = Record<string, string>;
@@ -50,6 +51,76 @@ export function BookingInquiryForm() {
   const [summary, setSummary] = useState<SubmittedEventSummary | null>(null);
   const dirtyFields = useRef(new Set<keyof BookingFields>());
   const confirmationRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const previousStep = useRef(currentStep);
+  const completed = status === "success";
+
+  useEffect(() => {
+    const form = formRef.current;
+    const card = form?.closest<HTMLElement>(".tray-service-card");
+    const shell = form?.closest<HTMLElement>(".page-shell");
+    if (!form || !card || !shell) return;
+    const root = getScrollContainer(form);
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const field = document.activeElement;
+      const editing = field instanceof HTMLElement && form.contains(field) && field.matches("input, select, textarea");
+      shell.dataset.bookingEditing = String(editing);
+      card.classList.toggle("is-editing", editing);
+      const bounds = getVisibleBounds(root);
+      const scale = getScrollScale(root);
+      card.style.setProperty("--booking-visible-height", `${Math.max(180, (bounds.bottom - bounds.top - 24) / scale)}px`);
+      if (!editing || !(field instanceof HTMLElement)) return;
+      const rect = field.getBoundingClientRect();
+      const formRect = form.getBoundingClientRect();
+      const priceHeight = form.querySelector(".booking-selection-note")?.getBoundingClientRect().height ?? 0;
+      const innerTop = Math.max(bounds.top, formRect.top) + priceHeight + 12;
+      const innerBottom = Math.min(bounds.bottom, formRect.bottom) - 12;
+      if (rect.bottom > innerBottom) form.scrollTop += (rect.bottom - innerBottom) / scale;
+      else if (rect.top < innerTop) form.scrollTop -= (innerTop - rect.top) / scale;
+      const visible = field.getBoundingClientRect();
+      if (visible.bottom > bounds.bottom - 12) setScrollTop(root, getScrollTop(root) + (visible.bottom - bounds.bottom + 12) / scale);
+      else if (visible.top < bounds.top + 12) setScrollTop(root, getScrollTop(root) + (visible.top - bounds.top - 12) / scale);
+    };
+    const schedule = () => { if (!frame) frame = window.requestAnimationFrame(update); };
+    form.addEventListener("focusin", schedule);
+    form.addEventListener("focusout", schedule);
+    window.addEventListener("resize", schedule);
+    window.visualViewport?.addEventListener("resize", schedule);
+    window.visualViewport?.addEventListener("scroll", schedule);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      form.removeEventListener("focusin", schedule);
+      form.removeEventListener("focusout", schedule);
+      window.removeEventListener("resize", schedule);
+      window.visualViewport?.removeEventListener("resize", schedule);
+      window.visualViewport?.removeEventListener("scroll", schedule);
+      delete shell.dataset.bookingEditing;
+    };
+  }, [completed]);
+
+  useEffect(() => {
+    if (previousStep.current === currentStep) return;
+    previousStep.current = currentStep;
+    const form = formRef.current;
+    form?.scrollTo({ top: 0, behavior: "instant" });
+    form?.querySelector<HTMLElement>(".booking-form-heading strong")?.focus({ preventScroll: true });
+    if (form) {
+      const root = getScrollContainer(form);
+      const bounds = getVisibleBounds(root);
+      const top = form.getBoundingClientRect().top;
+      if (top < bounds.top + 12 || top > bounds.bottom - 100) {
+        setScrollTop(root, getScrollTop(root) + (top - bounds.top - 12) / getScrollScale(root));
+      }
+    }
+  }, [currentStep]);
+
+  useEffect(() => {
+    const firstError = Object.keys(errors)[0];
+    const field = firstError ? formRef.current?.elements.namedItem(firstError) : null;
+    if (field instanceof HTMLElement) field.focus();
+  }, [errors]);
 
   useEffect(() => {
     const prefill = preferenceValues(preferences);
@@ -147,16 +218,16 @@ export function BookingInquiryForm() {
   const fieldError = (name: string) => errors[name] ? <span className="field-error">{errors[name]}</span> : null;
 
   return (
-    <form className="booking-form" onSubmit={submit} noValidate>
+    <form ref={formRef} className="booking-form" onSubmit={submit} noValidate>
       <div className="booking-form-topline">
-        <div className="booking-form-heading"><span>CHECK YOUR DATE</span><strong>{currentStep === 0 ? "Cuéntanos sobre tu evento" : currentStep === 1 ? "Tu servicio" : currentStep === 2 ? "Tus datos" : "Revisar"}</strong></div>
+        <div className="booking-form-heading"><span>CHECK YOUR DATE</span><strong tabIndex={-1}>{currentStep === 0 ? "Cuéntanos sobre tu evento" : currentStep === 1 ? "Tu servicio" : currentStep === 2 ? "Tus datos" : "Revisar"}</strong></div>
         <span className="booking-progress">0{currentStep + 1} / 04</span>
       </div>
       {selectedEvent ? (
         <p className="booking-selection-note" aria-live="polite">
           {selectedEvent.label} · {selectedEvent.price === null
             ? "Cotización personalizada"
-            : `Referencia: ${selectedEvent.price.toLocaleString("en-US")} · hasta 4 h`}
+            : `Referencia: $${selectedEvent.price.toLocaleString("en-US")} · hasta 4 h`}
         </p>
       ) : null}
       <div key={currentStep} className={`booking-step is-${direction}`}>

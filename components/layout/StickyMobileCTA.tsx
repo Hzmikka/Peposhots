@@ -9,6 +9,7 @@ export function StickyMobileCTA() {
   const dockRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLDivElement>(null);
   const [docked, setDocked] = useState(false);
+  const [bookingVisible, setBookingVisible] = useState(false);
 
   useEffect(() => {
     const dock = dockRef.current;
@@ -16,6 +17,11 @@ export function StickyMobileCTA() {
     if (!dock || !cta) return;
 
     const scrollRoot = getScrollContainer(dock);
+    const bookingCard = dock.closest(".page-shell")?.querySelector(".tray-service-card");
+    const bookingObserver = new IntersectionObserver(([entry]) => {
+      setBookingVisible(entry.isIntersecting && entry.intersectionRatio >= 0.05);
+    }, { root: scrollRoot, threshold: [0, 0.05] });
+    if (bookingCard) bookingObserver.observe(bookingCard);
     let observer: IntersectionObserver | null = null;
 
     const observeDock = () => {
@@ -46,13 +52,14 @@ export function StickyMobileCTA() {
 
     return () => {
       observer?.disconnect();
+      bookingObserver.disconnect();
       resizeObserver.disconnect();
     };
   }, []);
 
   return (
     <div ref={dockRef} className="mobile-cta-dock">
-      <div ref={ctaRef} className={`mobile-sticky-cta${docked ? " is-docked" : " is-floating"}`}>
+      <div ref={ctaRef} className={`mobile-sticky-cta${docked ? " is-docked" : " is-floating"}${bookingVisible ? " is-booking" : ""}`}>
         <a className="btn btn-primary" href="#booking">Consultar fecha</a>
         <a className="btn btn-quiet" href={`tel:${phone}`}>Llamar</a>
       </div>

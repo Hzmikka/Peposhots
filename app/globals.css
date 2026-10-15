@@ -125,6 +125,7 @@ body {
 }
 .page-shell.is-live {
   min-height: 100dvh;
+  overflow-x: clip;
   overflow-y: visible;
   border-radius: 0;
   clip-path: none;
@@ -285,7 +286,7 @@ img { max-width: 100%; }
 .cocktail-section-intro .kicker { margin-bottom: .55rem; color: #4B5D16; }
 .cocktail-section-intro h2 { margin: 0; color: #2A1713; font-family: inherit; font-size: clamp(2.25rem, 10cqw, 3.25rem); font-weight: 800; line-height: .92; letter-spacing: -.035em; }
 .cocktail-section-intro > p:last-child { margin: .55rem 0 0; color: rgba(42,23,19,.68); font-family: inherit; font-size: .78rem; }
-.cocktail-editorial-carousel { width: 100%; overflow: visible; touch-action: pan-y; cursor: grab; user-select: none; }
+.cocktail-editorial-carousel { width: 100%; overflow: visible; touch-action: pan-y pinch-zoom; cursor: grab; user-select: none; }
 .cocktail-editorial-carousel:active { cursor: grabbing; }
 .cocktail-editorial-card { position: relative; z-index: 4; width: min(100%, 426px); aspect-ratio: 426 / 604; margin-inline: auto; overflow: hidden; border: 1px solid rgba(42,23,19,.08); border-radius: 22px 22px 30px 30px; background: #F7F3EA; box-shadow: 0 8px 22px rgba(42,23,19,.09); transition: transform .26s cubic-bezier(.2,.8,.2,1); animation: cocktail-card-in .28s ease both; }
 .cocktail-card-header { position: relative; z-index: 3; width: 100%; min-height: 32%; padding: 1.05rem 1rem .45rem; background: #F7F3EA; text-align: center; animation: cocktail-copy-in .38s ease .72s both; }
@@ -296,9 +297,11 @@ img { max-width: 100%; }
 .cocktail-card-stage { position: absolute; inset: 0; height: auto; overflow: visible; }
 .cocktail-hero-glass { position: absolute; top: 32%; left: 50%; z-index: 2; width: 68.31%; height: 64.57%; transform: translateX(-50%); transform-origin: center top; will-change: transform; animation: cocktail-glass-in .78s cubic-bezier(.22,.75,.18,1) both; }
 .cocktail-hero-glass img { object-fit: contain; pointer-events: none; -webkit-user-drag: none; }
-.cocktail-hero-glass { cursor: grab; touch-action: none; }
+.cocktail-hero-glass { cursor: grab; touch-action: pinch-zoom; }
 .cocktail-hero-glass:active { cursor: grabbing; }
 .cocktail-hero-glass.is-drag-source { opacity: 0 !important; }
+.section-drinks[data-entrance-pending="true"] :is(.cocktail-editorial-card, .cocktail-card-header, .cocktail-hero-glass, .cocktail-card-texture) { animation-play-state: paused; }
+.section-drinks[data-entrance-pending="true"] .cocktail-hero-glass { will-change: auto; }
 .cocktail-card-texture { position: absolute; inset: auto 0 0; z-index: 1; width: 100%; height: 40.4%; overflow: hidden; border-radius: 24px 24px 29px 29px; background: #F2B635; animation: cocktail-texture-in .55s cubic-bezier(.22,.75,.18,1) .38s both; pointer-events: none; }
 .cocktail-card-texture img { object-fit: cover; object-position: center top; pointer-events: none; -webkit-user-drag: none; }
 .cocktail-card-nav { position: relative; z-index: 4; display: flex; width: min(100%, 426px); min-height: 34px; align-items: center; justify-content: center; gap: .65rem; margin: .85rem auto 0; }
@@ -308,10 +311,10 @@ img { max-width: 100%; }
 .cocktail-card-progress button { width: 6px; height: 6px; padding: 0; border: 0; border-radius: 99px; background: rgba(42,23,19,.18); cursor: pointer; transition: width .22s ease, background .22s ease; }
 .cocktail-card-progress button.is-active { width: 24px; background: #B9E10E; }
 .drinks-tray { position: relative; left: 50%; width: min(152%, 720px); margin: 4.25rem 0 -1rem; isolation: isolate; transform: translateX(-50%); transition: transform .2s ease; }
-.drinks-tray.is-ready { transform: translateX(-50%) scale(1.02); }
+.drinks-tray.is-ready > img { filter: drop-shadow(0 0 8px rgba(9,71,53,.3)); }
 .drinks-tray > img { position: relative; z-index: 1; display: block; width: 100%; height: auto; object-fit: contain; pointer-events: none; }
 .drinks-tray-items { position: absolute; inset: 0; z-index: 2; pointer-events: none; transform: translateY(-20%); }
-.tray-drink { position: absolute; height: 68%; transform-origin: center bottom; transition: left .28s ease, bottom .28s ease, width .28s ease, transform .28s ease; }
+.tray-drink { position: absolute; height: 68%; transform-origin: center bottom; transition: transform .28s ease; }
 .tray-drink img { object-fit: contain; object-position: center bottom; pointer-events: none; -webkit-user-drag: none; }
 /* Keep hit areas on each glass so overlapping transparent image margins don't block its neighbors. */
 .tray-drink-select { position: absolute; inset: 0 25%; z-index: 1; padding: 0; border: 0; border-radius: 12px; background: transparent; cursor: pointer; pointer-events: auto; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
@@ -323,7 +326,7 @@ img { max-width: 100%; }
 .selected-drinks-list { position: relative; z-index: 5; display: grid; gap: 8px; width: min(100%, 426px); margin: 0 auto 1.2rem; font-family: Inter, var(--font-inter-web), ui-sans-serif, system-ui, sans-serif; }
 .selected-drinks-list > span { color: #094735; font-size: .78rem; font-weight: 850; }
 .selected-drinks-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.selected-drinks-chips button { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 9px 12px; border: 1px solid rgba(9,71,53,.17); border-radius: 999px; background: #EAF5DD; color: #094735; font-size: .78rem; font-weight: 700; cursor: pointer; }
+.selected-drinks-chips button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 9px 12px; border: 1px solid rgba(9,71,53,.17); border-radius: 999px; background: #EAF5DD; color: #094735; font-size: .78rem; font-weight: 700; cursor: pointer; }
 .selected-drinks-chips button:focus-visible { outline: 2px solid #094735; outline-offset: 2px; }
 .selected-drinks-chips button span { font-size: 1.1rem; font-weight: 900; }
 .drink-drag-ghost { position: fixed; z-index: 10000; transform-origin: center; pointer-events: none; will-change: transform; filter: drop-shadow(0 8px 10px rgba(8,14,9,.16)); }
@@ -484,18 +487,32 @@ img { max-width: 100%; }
 .direct-contact-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .direct-contact-actions a { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: .7rem .9rem; border-radius: 999px; background: #CEF17B; color: #094735; font-weight: 850; text-align: center; }
 .direct-contact-actions .direct-contact-whatsapp { grid-column: 1 / -1; min-height: 48px; background: #094735; color: #CEF17B; }
-.direct-contact-tools { position: relative; z-index: 2; height: 230px; margin-bottom: clamp(390px, 115cqw, 485px); pointer-events: none; }
-.direct-contact-tools img { position: absolute; height: auto; display: block; transition: left 780ms cubic-bezier(.22,.75,.18,1), transform 780ms cubic-bezier(.22,.75,.18,1), opacity 620ms ease; will-change: left, transform, opacity; }
-.direct-contact-tools img:first-of-type { bottom: -280%; left: -36%; z-index: 2; width: 200%; max-width: none; }
-.direct-contact-tools img:last-of-type { bottom: -321%; left: 80%; z-index: 1; width: 240%; max-width: none; transform: translateX(-53%); }
-.direct-contact-tools.is-settled img:first-of-type { left: -170%; opacity: 0; }
-.direct-contact-tools.is-settled img:last-of-type { left: 50%; transform: translateX(-50%); }
-.tray-service-card { --color-1: #094735; --color-2: #CEF17B; --color-3: #CEECB3; position: absolute; top: calc(100% - 64px); left: 50%; z-index: 3; width: min(calc(100cqw - 44px), 364px); height: clamp(520px, 145cqw, 580px); overflow: hidden; border-radius: 26px; background: #FFF; box-shadow: 0 18px 45px rgba(9,71,53,.12); opacity: 0; transform: translate(-50%, 22px) scale(.94); transform-origin: center; transition: opacity 520ms ease 620ms, transform 680ms cubic-bezier(.22,.75,.18,1) 620ms; pointer-events: none; }
+.booking-form-link { justify-self: start; min-height: 44px; display: inline-flex; align-items: center; color: #094735; font-weight: 850; text-decoration: underline; text-underline-offset: 3px; }
+.direct-contact-tools { --booking-lift: 0px; position: relative; z-index: 2; padding-top: 46.111%; pointer-events: none; }
+.booking-artwork { position: absolute; inset: 0 0 auto; aspect-ratio: 36 / 23; pointer-events: none; }
+.booking-artwork > img { position: absolute; height: auto; display: block; transition: transform 780ms cubic-bezier(.22,.75,.18,1), opacity 620ms ease; }
+.booking-artwork > img:first-of-type { bottom: -280%; left: -36%; z-index: 2; width: 200%; max-width: none; transform: translateY(calc(-1 * var(--booking-lift))); }
+.booking-artwork > img:last-of-type { bottom: -321%; left: 80%; z-index: 1; width: 240%; max-width: none; transform: translate(-53%, calc(-1 * var(--booking-lift))); }
+.direct-contact-tools.is-settled .booking-artwork > img:first-of-type { opacity: 0; transform: translate(-67%, calc(-1 * var(--booking-lift))); }
+.direct-contact-tools.is-settled .booking-artwork > img:last-of-type { transform: translate(-62.5%, calc(-1 * var(--booking-lift))); }
+.tray-service-card { --color-1: #094735; --color-2: #CEF17B; --color-3: #CEECB3; position: relative; left: 50%; z-index: 3; width: min(calc(100cqw - 44px), 364px); height: clamp(520px, 145cqw, 580px); overflow: hidden; border-radius: 26px; background: #FFF; box-shadow: 0 18px 45px rgba(9,71,53,.12); opacity: 1; transform: translateX(-50%); transform-origin: center top; pointer-events: auto; scroll-margin-block: 48px; }
+.direct-contact-tools.is-pending .tray-service-card { visibility: hidden; opacity: 0; transform: translate(-50%, 22px) scale(.94); pointer-events: none; }
+.direct-contact-tools.is-settled .tray-service-card { transition: opacity 520ms ease 620ms, transform 680ms cubic-bezier(.22,.75,.18,1) 620ms; }
 .direct-contact-tools.is-settled .tray-service-card { opacity: 1; transform: translate(-50%, 0) scale(1); pointer-events: auto; }
 .booking-form { width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scroll-padding-bottom: 20px; background: #FFF; color: var(--color-1); border-radius: inherit; padding: 16px clamp(12px, 4cqw, 17px); }
+.tray-service-card.is-editing { height: min(clamp(520px, 145cqw, 580px), var(--booking-visible-height, 580px)); }
+.page-shell[data-booking-editing="true"] .mobile-sticky-cta.is-floating { visibility: hidden; pointer-events: none; }
+.mobile-sticky-cta.is-floating.is-booking { visibility: hidden; pointer-events: none; }
+.cocktail-card-nav { gap: min(.4rem, 1cqw); }
+.cocktail-card-nav > button, .deck-navigation > button { min-width: 44px; min-height: 44px; }
+.cocktail-card-progress { gap: 1px; }
+.cocktail-card-progress button { display: grid; place-items: center; width: 10px; height: 44px; background: transparent; }
+.cocktail-card-progress button::after { content: ""; width: 6px; height: 6px; border-radius: 99px; background: rgba(42,23,19,.18); }
+.cocktail-card-progress button.is-active { width: 22px; background: transparent; }
+.cocktail-card-progress button.is-active::after { width: 22px; background: #B9E10E; }
 .booking-card-scroll { width: 100%; height: 100%; overflow-y: auto; background: #FFF; color: var(--color-1); border-radius: inherit; padding: 18px 16px 30px; }
 .booking-form-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
-.booking-selection-note { margin: -4px 0 14px; padding: 9px 10px; border: 1px solid rgba(9,71,53,.13); border-radius: 10px; background: #EAF5DD; color: #094735; font-size: .72rem; font-weight: 800; line-height: 1.35; }
+.booking-selection-note { position: sticky; top: 0; z-index: 5; margin: -4px 0 14px; padding: 9px 10px; border: 1px solid rgba(9,71,53,.13); border-radius: 10px; background: #EAF5DD; color: #094735; font-size: .72rem; font-weight: 800; line-height: 1.35; }
 .booking-form-heading { display: grid; gap: 3px; }
 .booking-form-heading span { color: var(--color-1); font-size: .52rem; font-weight: 900; letter-spacing: .16em; }
 .booking-form-heading strong { color: var(--color-1); font-family: Haettenschweiler, var(--font-display-web), "Arial Narrow", Impact, sans-serif; font-size: 1.12rem; font-weight: 500; line-height: 1; letter-spacing: .085em; text-transform: uppercase; }
@@ -529,11 +546,11 @@ img { max-width: 100%; }
 .booking-review-group { padding-bottom: 7px; border-bottom: 1px solid rgba(9,71,53,.12); }
 .booking-review-group header { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .booking-review-group h3 { margin-bottom: 5px; }
-.booking-review-group header button { padding: 2px 0; border: 0; background: transparent; color: var(--color-1); font-size: .52rem; font-weight: 900; text-decoration: underline; cursor: pointer; }
-.booking-review-group dl { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; margin: 0; }
-.booking-review-group dl > div { display: flex; min-width: 0; gap: 5px; font-size: .53rem; line-height: 1.2; }
+.booking-review-group header button { min-height: 44px; min-width: 44px; padding: 2px 0; border: 0; background: transparent; color: var(--color-1); font-size: .75rem; font-weight: 900; text-decoration: underline; cursor: pointer; }
+.booking-review-group dl { display: grid; grid-template-columns: 1fr; gap: 6px; margin: 0; }
+.booking-review-group dl > div { display: grid; grid-template-columns: minmax(68px, .38fr) minmax(0, 1fr); min-width: 0; gap: 8px; font-size: .78rem; line-height: 1.35; }
 .booking-review-group dt { color: rgba(9,71,53,.62); }
-.booking-review-group dd { overflow: hidden; margin: 0; color: var(--color-1); font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+.booking-review-group dd { margin: 0; color: var(--color-1); font-weight: 800; overflow-wrap: anywhere; }
 .booking-privacy-note { margin: 1px 0 -3px; color: rgba(9,71,53,.72); font-size: .65rem; line-height: 1.4; }
 .booking-privacy-note a { color: #094735; font-weight: 850; text-decoration: underline; text-underline-offset: 2px; }
 @keyframes booking-step-forward { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
@@ -689,16 +706,9 @@ img { max-width: 100%; }
 
   .page-shell.is-live .drinks-tray { margin-bottom: 0; }
 
-  /* Booking composition polish — live site only.
-     Keep the white booking card exactly where it is. Lift both background tool images by
-     the same 72px, and reclaim the same 72px from the section bottom so the CTA dock and
-     footer/logo all arrive 72px earlier without changing their relative geometry. */
+  /* Scale the booking artwork and its lift together, using the actual content width. */
   .page-shell.is-live .booking-intro { transform: translateY(calc(-8rem + 30px)); }
-  .page-shell.is-live .direct-contact-tools { margin-bottom: clamp(390px, 115cqw, 485px); }
-  .page-shell.is-live .direct-contact-tools img:first-of-type { transform: translateY(-72px); }
-  .page-shell.is-live .direct-contact-tools img:last-of-type { transform: translate(-53%, -72px); }
-  .page-shell.is-live .direct-contact-tools.is-settled img:first-of-type { transform: translateY(-72px); }
-  .page-shell.is-live .direct-contact-tools.is-settled img:last-of-type { transform: translate(-50%, -72px); }
+  .page-shell.is-live .direct-contact-tools { --booking-lift: calc(20cqw - 8px); }
   .page-shell.is-live .mobile-sticky-cta.is-floating { left: 50%; right: auto; width: calc(100cqw - 24px); max-width: 376px; transform: translateX(-50%); }
   .mobile-sticky-cta .btn:first-child { flex: 1; }
   .mobile-sticky-cta .btn-primary { border-color: #CEF17B; background: #CEF17B; color: #094735; }
@@ -739,7 +749,7 @@ img { max-width: 100%; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
   .cocktail-card-header,
   .cocktail-hero-glass,
   .cocktail-card-texture { animation-delay: 0s !important; }

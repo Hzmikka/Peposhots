@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState, type PointerEvent } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { createPortal } from "react-dom";
 import { Container } from "@/components/ui/Container";
 import { usePepoExperience } from "@/components/peposhots/PepoExperienceContext";
 import { drinks } from "@/data/drinks";
+import { getScrollContainer, getScrollScale, getScrollTop, getVisibleBounds, setScrollTop } from "@/lib/scrolling";
 
 type DrinkDrag = {
   id: (typeof drinks)[number]["id"];
@@ -14,6 +15,7 @@ type DrinkDrag = {
   x: number;
   y: number;
   scale: number;
+  rotate?: number;
   phase: "dragging" | "settling";
 };
 
@@ -44,21 +46,74 @@ export function DrinksExperience() {
   const [removingDrinkId, setRemovingDrinkId] = useState<string | null>(null);
   const lastTrayTap = useRef<{ id: string; time: number } | null>(null);
   const swipeStart = useRef<number | null>(null);
+  const swipeStartY = useRef(0);
+  const swipeHorizontal = useRef(false);
   const drinkPointerStart = useRef<{ x: number; y: number } | null>(null);
   const drinkSourceRef = useRef<Pick<DrinkDrag, "id" | "image" | "rect"> | null>(null);
   const drinkDragRef = useRef<DrinkDrag | null>(null);
   const trayRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const trayItemsRef = useRef<HTMLDivElement>(null);
   const trayReadyRef = useRef(false);
+  const renderFrame = useRef(0);
+  const scrollFrame = useRef(0);
+  const settleTimer = useRef(0);
+  const lastPointer = useRef<{ x: number; y: number } | null>(null);
+  const scrollRoot = useRef<HTMLElement | null>(null);
   const { preferences, setExploredDrink, setFavoriteDrinks } = usePepoExperience();
   const favoriteCocktails = preferences.favoriteDrinks ?? [];
   const active = drinks[activeIndex];
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const carousel = section?.querySelector<HTMLElement>(".cocktail-editorial-carousel");
+    if (!section || !carousel || typeof IntersectionObserver === "undefined") return;
+    const root = getScrollContainer(section);
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (motion.matches || carousel.getBoundingClientRect().top < getVisibleBounds(root).bottom) return;
+    // Play the first entrance when it can be seen, rather than during the initial page load.
+    section.dataset.entrancePending = "true";
+    const reveal = () => { delete section.dataset.entrancePending; observer.disconnect(); };
+    const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) reveal(); }, { root, threshold: 0.12 });
+    observer.observe(carousel);
+    motion.addEventListener("change", reveal);
+    return () => { observer.disconnect(); motion.removeEventListener("change", reveal); };
+  }, []);
+
+  useEffect(() => {
+    const reset = () => {
+      window.clearTimeout(settleTimer.current);
+      window.cancelAnimationFrame(scrollFrame.current);
+      scrollFrame.current = 0;
+      swipeStart.current = null;
+      drinkPointerStart.current = null;
+      drinkSourceRef.current = null;
+      drinkDragRef.current = null;
+      trayReadyRef.current = false;
+      window.cancelAnimationFrame(renderFrame.current);
+      renderFrame.current = window.requestAnimationFrame(() => {
+        renderFrame.current = 0;
+        setDrinkDrag(null);
+        setTrayReady(false);
+        setDragOffset(0);
+      });
+    };
+    window.addEventListener("resize", reset);
+    window.visualViewport?.addEventListener("resize", reset);
+    return () => {
+      window.removeEventListener("resize", reset);
+      window.visualViewport?.removeEventListener("resize", reset);
+      window.clearTimeout(settleTimer.current);
+      window.cancelAnimationFrame(scrollFrame.current);
+      window.cancelAnimationFrame(renderFrame.current);
+    };
+  }, []);
 
   function showTrayDrinkOptions(id: string, clickDetail: number) {
     const time = performance.now();
     const previousTap = lastTrayTap.current;
     // Touch clicks don't reliably report a double-click count across browsers.
-    if (clickDetail === 0 || (previousTap?.id === id && time - previousTap.time <= 450)) {
+    if (clickDetail === 0 || clickDetail >= 2 || (previousTap?.id === id && time - previousTap.time <= 450)) {
       setRemovingDrinkId(id);
       lastTrayTap.current = null;
       return;
@@ -74,14 +129,18 @@ export function DrinksExperience() {
   }
 
   function select(index: number) {
+    if (drinkDragRef.current) return;
     const normalized = (index + drinks.length) % drinks.length;
     setActiveIndex(normalized);
     setExploredDrink(drinks[normalized].id);
   }
 
   function startSwipe(event: PointerEvent<HTMLDivElement>) {
-    if (!event.isPrimary) return;
+    if (!event.isPrimary || (event.pointerType === "mouse" && event.button !== 0) || drinkDragRef.current) return;
+    scrollRoot.current = getScrollContainer(event.currentTarget);
     swipeStart.current = event.clientX;
+    swipeStartY.current = event.clientY;
+    swipeHorizontal.current = false;
     setDragOffset(0);
     const drinkElement = event.target instanceof Element ? event.target.closest<HTMLElement>(".cocktail-hero-glass") : null;
     if (drinkElement) {
@@ -96,7 +155,6 @@ export function DrinksExperience() {
       drinkPointerStart.current = null;
       drinkSourceRef.current = null;
     }
-    event.currentTarget.setPointerCapture(event.pointerId);
   }
 
   function updateSwipe(event: PointerEvent<HTMLDivElement>) {
@@ -109,6 +167,7 @@ export function DrinksExperience() {
         swipeStart.current = null;
         setDragOffset(0);
         setDrag({ ...source, x: 0, y: 0, scale: 1.04, phase: "dragging" });
+        event.currentTarget.setPointerCapture(event.pointerId);
       } else if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
         drinkPointerStart.current = null;
         drinkSourceRef.current = null;
@@ -119,7 +178,16 @@ export function DrinksExperience() {
       return;
     }
     if (swipeStart.current === null) return;
-    setDragOffset(Math.max(-72, Math.min(72, event.clientX - swipeStart.current)));
+    const dx = event.clientX - swipeStart.current;
+    const dy = event.clientY - swipeStartY.current;
+    if (!swipeHorizontal.current) {
+      if (Math.max(Math.abs(dx), Math.abs(dy)) < 10) return;
+      if (Math.abs(dy) >= Math.abs(dx)) { swipeStart.current = null; return; }
+      swipeHorizontal.current = true;
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+    const limit = event.currentTarget.clientWidth * 0.23;
+    setDragOffset(Math.max(-limit, Math.min(limit, dx / getScrollScale(scrollRoot.current))));
   }
 
   function endSwipe(event: PointerEvent<HTMLDivElement>) {
@@ -143,7 +211,10 @@ export function DrinksExperience() {
     if (tappedDrink && drinkSource && !favoriteCocktails.includes(drinkSource.id)) {
       swipeStart.current = null;
       setDragOffset(0);
-      setFavoriteDrinks((items) => items.includes(drinkSource.id) ? items : [...items, drinkSource.id]);
+      setDrag({ ...drinkSource, x: 0, y: 0, scale: 1, phase: "dragging" });
+      drinkPointerStart.current = { x: event.clientX, y: event.clientY };
+      trayReadyRef.current = true;
+      finishDrinkDrag(event);
       return;
     }
 
@@ -151,24 +222,54 @@ export function DrinksExperience() {
     const distance = event.clientX - swipeStart.current;
     swipeStart.current = null;
     setDragOffset(0);
-    if (Math.abs(distance) >= 38) select(activeIndex + (distance < 0 ? 1 : -1));
+    const threshold = Math.max(30, Math.min(60, event.currentTarget.getBoundingClientRect().width * 0.14));
+    if (swipeHorizontal.current && Math.abs(distance) >= threshold) select(activeIndex + (distance < 0 ? 1 : -1));
   }
 
   function setDrag(next: DrinkDrag | null) {
     drinkDragRef.current = next;
-    setDrinkDrag(next);
+    if (!renderFrame.current) renderFrame.current = window.requestAnimationFrame(() => {
+      renderFrame.current = 0;
+      setDrinkDrag(drinkDragRef.current);
+      setTrayReady(trayReadyRef.current);
+    });
   }
 
   function moveDrinkDrag(event: PointerEvent<HTMLDivElement>) {
+    lastPointer.current = { x: event.clientX, y: event.clientY };
+    event.stopPropagation();
+    updateDragPosition();
+    if (!scrollFrame.current) scrollFrame.current = window.requestAnimationFrame(autoScroll);
+  }
+
+  function autoScroll() {
+    scrollFrame.current = 0;
+    if (drinkDragRef.current?.phase !== "dragging" || !lastPointer.current) return;
+    const bounds = getVisibleBounds(scrollRoot.current);
+    const edge = Math.min(80, (bounds.bottom - bounds.top) * 0.18);
+    const y = lastPointer.current.y;
+    const speed = y > bounds.bottom - edge ? Math.min(16, (y - bounds.bottom + edge) * 0.25)
+      : y < bounds.top + edge ? -Math.min(16, (bounds.top + edge - y) * 0.25) : 0;
+    if (speed) setScrollTop(scrollRoot.current, getScrollTop(scrollRoot.current) + speed / getScrollScale(scrollRoot.current));
+    updateDragPosition();
+    scrollFrame.current = window.requestAnimationFrame(autoScroll);
+  }
+
+  function updateDragPosition() {
     const current = drinkDragRef.current;
     const start = drinkPointerStart.current;
+    const pointer = lastPointer.current;
     const tray = trayRef.current;
-    if (!current || !start || current.phase !== "dragging") return;
-    event.stopPropagation();
+    if (!current || !start || !pointer || current.phase !== "dragging") return;
 
-    const horizontalLimit = Math.max(42, (tray?.getBoundingClientRect().width ?? current.rect.width) * 0.48);
-    const x = Math.max(-horizontalLimit, Math.min(horizontalLimit, event.clientX - start.x));
-    const y = Math.max(-24, event.clientY - start.y);
+    const viewport = window.visualViewport;
+    const left = viewport?.offsetLeft ?? 0;
+    const right = left + (viewport?.width ?? window.innerWidth);
+    const bounds = getVisibleBounds(scrollRoot.current);
+    const x = Math.max(left - current.rect.left - current.rect.width / 2 + 20,
+      Math.min(right - current.rect.left - current.rect.width / 2 - 20, pointer.x - start.x));
+    const y = Math.max(bounds.top - current.rect.top - current.rect.height / 2 + 20,
+      Math.min(bounds.bottom - current.rect.top - current.rect.height / 2 - 20, pointer.y - start.y));
     const centerX = current.rect.left + current.rect.width / 2 + x;
     const centerY = current.rect.top + current.rect.height / 2 + y;
     const trayRect = tray?.getBoundingClientRect();
@@ -181,7 +282,6 @@ export function DrinksExperience() {
     );
 
     trayReadyRef.current = isInside;
-    setTrayReady(isInside);
     setDrag({ ...current, x, y });
   }
 
@@ -189,6 +289,9 @@ export function DrinksExperience() {
     const current = drinkDragRef.current;
     const start = drinkPointerStart.current;
     if (!current || !start) return;
+    window.cancelAnimationFrame(scrollFrame.current);
+    scrollFrame.current = 0;
+    swipeStart.current = null;
     event.stopPropagation();
     drinkPointerStart.current = null;
 
@@ -201,22 +304,37 @@ export function DrinksExperience() {
       const placement = trayLayouts[nextCount - 1][Math.min(nextCount - 1, 3)];
       const trayRect = trayItemsRef.current.getBoundingClientRect();
       const targetWidth = trayRect.width * placement.width / 100;
-      const targetHeight = current.rect.height * (targetWidth / current.rect.width);
-      const targetCenterX = trayRect.left + trayRect.width * placement.x / 100;
-      const targetCenterY = trayRect.bottom - trayRect.height * placement.bottom / 100 - targetHeight / 2;
+      const image = document.querySelector<HTMLImageElement>(".cocktail-hero-glass img");
+      const ratio = image && image.naturalHeight ? image.naturalWidth / image.naturalHeight : current.rect.width / current.rect.height;
+      const sourceHeight = Math.min(current.rect.height, current.rect.width / ratio);
+      const targetHeight = Math.min(trayRect.height * 0.68, targetWidth / ratio);
+      const angle = placement.rotate * Math.PI / 180;
+      const targetCenterX = trayRect.left + trayRect.width * placement.x / 100 + Math.sin(angle) * targetHeight / 2;
+      const targetCenterY = trayRect.bottom - trayRect.height * placement.bottom / 100 - Math.cos(angle) * targetHeight / 2;
       const x = targetCenterX - (current.rect.left + current.rect.width / 2);
       const y = targetCenterY - (current.rect.top + current.rect.height / 2);
-      const settled = { ...current, x, y, scale: targetWidth / current.rect.width, phase: "settling" as const };
+      const settled = { ...current, x, y, scale: targetHeight / sourceHeight, rotate: placement.rotate, phase: "settling" as const };
 
       trayReadyRef.current = false;
       setTrayReady(false);
-      setDrag(settled);
       const complete = () => {
         setFavoriteDrinks((items) => items.includes(current.id) ? items : [...items, current.id]);
         setDrag(null);
       };
       if (reducedMotion) complete();
-      else window.setTimeout(complete, 320);
+      else {
+        // Give a tapped glass its starting frame before beginning the landing transition.
+        setDrag({ ...current, phase: "settling" });
+        window.cancelAnimationFrame(renderFrame.current);
+        setDrinkDrag({ ...current, phase: "settling" });
+        renderFrame.current = window.requestAnimationFrame(() => {
+          renderFrame.current = window.requestAnimationFrame(() => {
+            renderFrame.current = 0;
+            setDrag(settled);
+            settleTimer.current = window.setTimeout(complete, 340);
+          });
+        });
+      }
       return;
     }
 
@@ -232,21 +350,27 @@ export function DrinksExperience() {
 
     trayReadyRef.current = false;
     setTrayReady(false);
-    const returning = { ...current, x: 0, y: 0, scale: 1, phase: "settling" as const };
+    const sourceRect = document.querySelector(".cocktail-hero-glass")?.getBoundingClientRect() ?? current.rect;
+    const returning = { ...current, x: sourceRect.left + sourceRect.width / 2 - current.rect.left - current.rect.width / 2,
+      y: sourceRect.top + sourceRect.height / 2 - current.rect.top - current.rect.height / 2,
+      scale: sourceRect.width / current.rect.width, phase: "settling" as const };
     setDrag(returning);
     if (reducedMotion) setDrag(null);
-    else window.setTimeout(() => setDrag(null), 300);
+    else settleTimer.current = window.setTimeout(() => setDrag(null), 340);
   }
 
   function cancelDrinkDrag(event: PointerEvent<HTMLDivElement>) {
     const current = drinkDragRef.current;
     if (!current) return;
+    if (current.phase === "settling") return;
+    window.cancelAnimationFrame(scrollFrame.current);
+    scrollFrame.current = 0;
     event.stopPropagation();
     drinkPointerStart.current = null;
     trayReadyRef.current = false;
     setTrayReady(false);
     setDrag({ ...current, x: 0, y: 0, scale: 1, phase: "settling" });
-    window.setTimeout(() => setDrag(null), 300);
+    settleTimer.current = window.setTimeout(() => setDrag(null), 340);
   }
 
   function cancelGesture(event: PointerEvent<HTMLDivElement>) {
@@ -259,6 +383,7 @@ export function DrinksExperience() {
 
   return (
     <section
+      ref={sectionRef}
       className="section section-drinks"
       id="drinks"
       onPointerDownCapture={(event) => {
@@ -281,6 +406,11 @@ export function DrinksExperience() {
           onPointerMove={updateSwipe}
           onPointerUp={endSwipe}
           onPointerCancel={cancelGesture}
+          onLostPointerCapture={(event) => {
+            // Touch starts with implicit capture on the glass. Transferring it to the
+            // carousel must not cancel the gesture when the child's capture is lost.
+            if (event.target === event.currentTarget) cancelGesture(event);
+          }}
         >
           <article
             key={active.id}
@@ -301,9 +431,9 @@ export function DrinksExperience() {
                 tabIndex={0}
                 aria-label={`Añadir ${active.name || "este cóctel"} a favoritos`}
                 onKeyDown={(event) => {
-                  if ((event.key === "Enter" || event.key === " ") && !favoriteCocktails.includes(active.id)) {
+                  if (event.key === "Enter" || event.key === " ") {
                     event.preventDefault();
-                    setFavoriteDrinks((items) => [...items, active.id]);
+                    setFavoriteDrinks((items) => items.includes(active.id) ? items : [...items, active.id]);
                   }
                 }}
               >
@@ -313,7 +443,6 @@ export function DrinksExperience() {
                   fill
                   sizes="220px"
                   draggable={false}
-                  priority={activeIndex === 0}
                 />
               </div>
               <div className="cocktail-card-texture">
@@ -405,7 +534,7 @@ export function DrinksExperience() {
           </div>
         </div>
         {favoriteCocktails.length > 0 ? (
-          <div className="selected-drinks-list" aria-label="Cócteles seleccionados">
+          <div className="selected-drinks-list" aria-label="Cócteles seleccionados" aria-live="polite">
             <span>Tus cócteles · {favoriteCocktails.length}</span>
             <div className="selected-drinks-chips">
               {favoriteCocktails.map((id) => {
@@ -428,7 +557,7 @@ export function DrinksExperience() {
             top: drinkDrag.rect.top,
             width: drinkDrag.rect.width,
             height: drinkDrag.rect.height,
-            transform: `translate3d(${drinkDrag.x}px, ${drinkDrag.y}px, 0) scale(${drinkDrag.scale})`,
+            transform: `translate3d(${drinkDrag.x}px, ${drinkDrag.y}px, 0) rotate(${drinkDrag.rotate ?? 0}deg) scale(${drinkDrag.scale})`,
           }}
           aria-hidden="true"
         >
