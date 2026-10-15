@@ -243,11 +243,11 @@ img { max-width: 100%; }
 .section-bars .section-head h2 { font-family: Haettenschweiler, var(--font-display-web), "Arial Narrow", Impact, sans-serif; font-weight: 400; letter-spacing: .035em; }
 .section-bars .section-head > p { margin: .45rem 0 0; font-weight: 800; letter-spacing: .04em; }
 .bar-context { display: block; margin-top: .75rem; color: rgba(247,243,234,.72); font-size: .65rem; font-weight: 750; letter-spacing: .04em; }
-.bar-deck { position: relative; width: min(72cqw, 285px); height: 400px; margin: 0 auto 8px; perspective: 1000px; }
+.bar-deck { position: relative; width: min(72cqw, 285px); height: auto; aspect-ratio: 285 / 400; margin: 0 auto 8px; perspective: 1000px; }
 .deck-depth-1 { z-index: 2; transform: translate(8px, 11px) rotate(4deg) scale(.97); }
 .deck-depth-2 { z-index: 1; transform: translate(-8px, 21px) rotate(-6deg) scale(.94); opacity: .82; }
 .deck-navigation { display: flex; align-items: center; justify-content: center; gap: .75rem; margin-bottom: 1rem; }
-.deck-navigation > button { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #094735; border-radius: 50%; background: #094735; color: #FFF; cursor: pointer; }
+.deck-navigation > button { width: 44px; height: 44px; flex: 0 0 44px; display: grid; place-items: center; border: 1px solid #094735; border-radius: 50%; background: #094735; color: #FFF; cursor: pointer; }
 .deck-navigation > button:hover, .deck-navigation > button:focus-visible { border-color: #CEF17B; background: #CEF17B; color: #094735; outline: 0; }
 .deck-progress { display: flex; gap: 4px; }
 .deck-progress i { width: 18px; height: 2px; border-radius: 99px; background: rgba(8,14,9,.28); }
@@ -268,9 +268,9 @@ img { max-width: 100%; }
 .stationary-bar-info > :not(.choose-bar) { max-width: 88%; }
 .stationary-bar-info .bar-recommendation { display: inline-flex; margin-bottom: .45rem; padding: .35rem .55rem; border-radius: 999px; background: #B9E10E; color: #2A1713; font-size: .56rem; line-height: 1; font-weight: 900; letter-spacing: .06em; }
 .stationary-bar-info .bar-index { display: block; margin: 0 0 .2rem; color: #CEF17B; font-size: .66rem; font-weight: 900; letter-spacing: .1em; }
-.stationary-bar-info h3 { margin: 0; color: #094735; font-family: Haettenschweiler, var(--font-display-web), "Arial Narrow", Impact, sans-serif; font-size: 1.4rem; line-height: 1; letter-spacing: .02em; text-transform: uppercase; white-space: nowrap; }
-.stationary-bar-info > p { display: -webkit-box; max-width: 72%; min-height: 1.75rem; margin: .35rem 0 0; overflow: hidden; color: #094735; font-size: .68rem; line-height: 1.3; letter-spacing: -.015em; white-space: normal; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
-.stationary-bar-info .tag-row { display: flex; flex-wrap: nowrap; gap: .35rem; margin-top: .55rem; }
+.stationary-bar-info h3 { margin: 0; color: #094735; font-family: Haettenschweiler, var(--font-display-web), "Arial Narrow", Impact, sans-serif; font-size: 1.4rem; line-height: 1; letter-spacing: .02em; text-transform: uppercase; text-wrap: balance; }
+.stationary-bar-info > p { max-width: 82%; min-height: 1.75rem; margin: .35rem 0 0; color: #094735; font-size: .75rem; line-height: 1.35; letter-spacing: -.015em; white-space: normal; }
+.stationary-bar-info .tag-row { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .55rem; }
 .stationary-bar-info .tag-row span { padding: .35rem .6rem; border: 1px solid rgba(9,71,53,.14); border-radius: 999px; background: #EAF5DD; color: #094735; font-size: .62rem; font-weight: 800; }
 .stationary-bar-info .choose-bar { min-width: 154px; min-height: 38px; margin-top: .7rem; padding: .45rem .75rem; border: 1px solid #CEF17B; border-radius: 999px; background: #CEF17B; color: #094735; font-size: .65rem; font-weight: 850; cursor: pointer; }
 .stationary-bar-info .choose-bar:hover,
@@ -294,7 +294,7 @@ img { max-width: 100%; }
 .cocktail-ingredients { margin: .85rem 0 0; color: #2A1713; font-size: .66rem; line-height: 1.25; font-weight: 700; letter-spacing: .1em; }
 .cocktail-descriptor { max-width: 34ch; margin: .48rem auto 0; color: rgba(42,23,19,.68); font-size: .57rem; line-height: 1.35; font-weight: 500; letter-spacing: .055em; }
 .cocktail-card-stage { position: absolute; inset: 0; height: auto; overflow: visible; }
-.cocktail-hero-glass { position: absolute; top: 32%; left: 50%; z-index: 2; width: 68.31%; height: 64.57%; transform: translateX(-50%); transform-origin: center top; animation: cocktail-glass-in .78s cubic-bezier(.22,.75,.18,1) both; }
+.cocktail-hero-glass { position: absolute; top: 32%; left: 50%; z-index: 2; width: 68.31%; height: 64.57%; transform: translateX(-50%); transform-origin: center top; will-change: transform; animation: cocktail-glass-in .78s cubic-bezier(.22,.75,.18,1) both; }
 .cocktail-hero-glass img { object-fit: contain; pointer-events: none; -webkit-user-drag: none; }
 .cocktail-hero-glass { cursor: grab; touch-action: none; }
 .cocktail-hero-glass:active { cursor: grabbing; }
@@ -320,13 +320,19 @@ img { max-width: 100%; }
 .tray-drink-select:focus-visible,
 .tray-drink-remove:focus-visible { outline: 2px solid #094735; outline-offset: 3px; }
 .tray-more { position: absolute; right: 12%; bottom: 22%; z-index: 8; display: grid; min-width: 28px; height: 28px; place-items: center; padding-inline: 7px; border-radius: 99px; background: rgba(9,71,53,.9); color: #FFF; font: 800 .62rem/1 Inter, var(--font-inter-web), ui-sans-serif, system-ui, sans-serif; }
+.selected-drinks-list { position: relative; z-index: 5; display: grid; gap: 8px; width: min(100%, 426px); margin: 0 auto 1.2rem; font-family: Inter, var(--font-inter-web), ui-sans-serif, system-ui, sans-serif; }
+.selected-drinks-list > span { color: #094735; font-size: .78rem; font-weight: 850; }
+.selected-drinks-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.selected-drinks-chips button { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 9px 12px; border: 1px solid rgba(9,71,53,.17); border-radius: 999px; background: #EAF5DD; color: #094735; font-size: .78rem; font-weight: 700; cursor: pointer; }
+.selected-drinks-chips button:focus-visible { outline: 2px solid #094735; outline-offset: 2px; }
+.selected-drinks-chips button span { font-size: 1.1rem; font-weight: 900; }
 .drink-drag-ghost { position: fixed; z-index: 10000; transform-origin: center; pointer-events: none; will-change: transform; filter: drop-shadow(0 8px 10px rgba(8,14,9,.16)); }
 .drink-drag-ghost.is-settling { transition: transform .32s cubic-bezier(.22,.75,.18,1); }
 .drink-drag-ghost img { object-fit: contain; }
 @keyframes cocktail-card-in { from { opacity: .72; } to { opacity: 1; } }
 @keyframes cocktail-glass-in {
-  0%, 18% { top: -8%; width: 170%; height: 100%; opacity: 1; }
-  100% { top: 32%; width: 68.31%; height: 64.57%; opacity: 1; }
+  0%, 18% { transform: translateX(-50%) translateY(-62%) scale(2.49); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
 }
 @keyframes cocktail-texture-in {
   from { opacity: 0; transform: translateY(105%); }
@@ -478,15 +484,15 @@ img { max-width: 100%; }
 .direct-contact-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .direct-contact-actions a { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; padding: .7rem .9rem; border-radius: 999px; background: #CEF17B; color: #094735; font-weight: 850; text-align: center; }
 .direct-contact-actions .direct-contact-whatsapp { grid-column: 1 / -1; min-height: 48px; background: #094735; color: #CEF17B; }
-.direct-contact-tools { position: relative; z-index: 2; height: 230px; margin-bottom: 360px; pointer-events: none; }
+.direct-contact-tools { position: relative; z-index: 2; height: 230px; margin-bottom: clamp(390px, 115cqw, 485px); pointer-events: none; }
 .direct-contact-tools img { position: absolute; height: auto; display: block; transition: left 780ms cubic-bezier(.22,.75,.18,1), transform 780ms cubic-bezier(.22,.75,.18,1), opacity 620ms ease; will-change: left, transform, opacity; }
 .direct-contact-tools img:first-of-type { bottom: -280%; left: -36%; z-index: 2; width: 200%; max-width: none; }
 .direct-contact-tools img:last-of-type { bottom: -321%; left: 80%; z-index: 1; width: 240%; max-width: none; transform: translateX(-53%); }
 .direct-contact-tools.is-settled img:first-of-type { left: -170%; opacity: 0; }
 .direct-contact-tools.is-settled img:last-of-type { left: 50%; transform: translateX(-50%); }
-.tray-service-card { --color-1: #094735; --color-2: #CEF17B; --color-3: #CEECB3; position: absolute; top: calc(100% - 64px); left: 8%; z-index: 3; width: 84%; height: calc(215% + 24px); overflow: hidden; border-radius: 26px; background: #FFF; box-shadow: 0 18px 45px rgba(9,71,53,.12); opacity: 0; transform: translateY(22px) scale(.94); transform-origin: center; transition: opacity 520ms ease 620ms, transform 680ms cubic-bezier(.22,.75,.18,1) 620ms; pointer-events: none; }
-.direct-contact-tools.is-settled .tray-service-card { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
-.booking-form { width: 100%; height: 100%; overflow: hidden; background: #FFF; color: var(--color-1); border-radius: inherit; padding: 16px 17px; }
+.tray-service-card { --color-1: #094735; --color-2: #CEF17B; --color-3: #CEECB3; position: absolute; top: calc(100% - 64px); left: 50%; z-index: 3; width: min(calc(100cqw - 44px), 364px); height: clamp(520px, 145cqw, 580px); overflow: hidden; border-radius: 26px; background: #FFF; box-shadow: 0 18px 45px rgba(9,71,53,.12); opacity: 0; transform: translate(-50%, 22px) scale(.94); transform-origin: center; transition: opacity 520ms ease 620ms, transform 680ms cubic-bezier(.22,.75,.18,1) 620ms; pointer-events: none; }
+.direct-contact-tools.is-settled .tray-service-card { opacity: 1; transform: translate(-50%, 0) scale(1); pointer-events: auto; }
+.booking-form { width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scroll-padding-bottom: 20px; background: #FFF; color: var(--color-1); border-radius: inherit; padding: 16px clamp(12px, 4cqw, 17px); }
 .booking-card-scroll { width: 100%; height: 100%; overflow-y: auto; background: #FFF; color: var(--color-1); border-radius: inherit; padding: 18px 16px 30px; }
 .booking-form-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
 .booking-form-heading { display: grid; gap: 3px; }
@@ -498,13 +504,13 @@ img { max-width: 100%; }
 .booking-step.is-back { animation: booking-step-back 210ms ease both; }
 .booking-form-section h3, .booking-review-group h3 { margin: 0 0 10px; color: var(--color-1); font-size: .58rem; line-height: 1; letter-spacing: .14em; }
 .booking-form-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-.booking-form label { display: grid; gap: 5px; min-width: 0; color: var(--color-1); font-size: .61rem; font-weight: 800; line-height: 1.1; }
+.booking-form label { display: grid; gap: 5px; min-width: 0; color: var(--color-1); font-size: .73rem; font-weight: 800; line-height: 1.2; }
 .booking-form input, .booking-form textarea, .booking-form select { width: 100%; min-height: 44px; padding: 9px 11px; border: 1px solid rgba(9,71,53,.18); border-radius: 10px; outline: none; background: rgba(206,236,179,.3); color: var(--color-1); font-size: .68rem; line-height: 1.2; transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease; }
 .booking-form textarea { min-height: 58px; resize: none; }
 .booking-form input::placeholder, .booking-form textarea::placeholder { color: rgba(9,71,53,.55); }
 .booking-form input:hover, .booking-form textarea:hover, .booking-form select:hover { border-color: rgba(9,71,53,.38); }
 .booking-form input:focus, .booking-form textarea:focus, .booking-form select:focus { border-color: var(--color-1); background: #FFF; box-shadow: 0 0 0 3px rgba(206,241,123,.42); }
-.booking-form .field-error { color: var(--color-1); font-size: .55rem; text-decoration: underline; }
+.booking-form .field-error { color: var(--color-1); font-size: .68rem; text-decoration: underline; }
 .booking-drinks { margin-top: 13px; }
 .booking-drinks h4 { margin: 0 0 6px; color: var(--color-1); font-size: .54rem; letter-spacing: .12em; }
 .booking-tags { display: flex; max-height: 52px; flex-wrap: wrap; align-items: center; gap: 5px; overflow: hidden; }
@@ -527,7 +533,7 @@ img { max-width: 100%; }
 .booking-review-group dl > div { display: flex; min-width: 0; gap: 5px; font-size: .53rem; line-height: 1.2; }
 .booking-review-group dt { color: rgba(9,71,53,.62); }
 .booking-review-group dd { overflow: hidden; margin: 0; color: var(--color-1); font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
-.booking-privacy-note { margin: 1px 0 -3px; color: rgba(9,71,53,.62); font-size: .5rem; line-height: 1.3; }
+.booking-privacy-note { margin: 1px 0 -3px; color: rgba(9,71,53,.72); font-size: .65rem; line-height: 1.4; }
 .booking-privacy-note a { color: #094735; font-weight: 850; text-decoration: underline; text-underline-offset: 2px; }
 @keyframes booking-step-forward { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes booking-step-back { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
@@ -674,6 +680,9 @@ img { max-width: 100%; }
 
   /* Keep the cocktail art oversized on real phones, matching the earlier framed demo feel. */
   .page-shell.is-live .cocktail-hero-glass {
+    top: 30%;
+    width: 76%;
+    height: 68%;
     animation-name: cocktail-glass-in-live;
   }
 
@@ -684,7 +693,7 @@ img { max-width: 100%; }
      the same 72px, and reclaim the same 72px from the section bottom so the CTA dock and
      footer/logo all arrive 72px earlier without changing their relative geometry. */
   .page-shell.is-live .booking-intro { transform: translateY(calc(-8rem + 30px)); }
-  .page-shell.is-live .direct-contact-tools { margin-bottom: 288px; }
+  .page-shell.is-live .direct-contact-tools { margin-bottom: clamp(390px, 115cqw, 485px); }
   .page-shell.is-live .direct-contact-tools img:first-of-type { transform: translateY(-72px); }
   .page-shell.is-live .direct-contact-tools img:last-of-type { transform: translate(-53%, -72px); }
   .page-shell.is-live .direct-contact-tools.is-settled img:first-of-type { transform: translateY(-72px); }
@@ -693,6 +702,7 @@ img { max-width: 100%; }
   .mobile-sticky-cta .btn:first-child { flex: 1; }
   .mobile-sticky-cta .btn-primary { border-color: #CEF17B; background: #CEF17B; color: #094735; }
   .mobile-sticky-cta .btn-quiet { border-color: rgba(8,14,9,.16); background: #FFFDF8; color: #080E09; }
+  .page-shell:has(.booking-form input:focus, .booking-form select:focus, .booking-form textarea:focus) .mobile-sticky-cta.is-floating { opacity: 0; pointer-events: none; }
   .site-footer { padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
   /* Platform-stable typography: desktop keeps the original Windows faces when available;
      Android/iOS use bundled web fallbacks with compatible condensed/editorial metrics. */
@@ -722,8 +732,8 @@ img { max-width: 100%; }
 
 
 @keyframes cocktail-glass-in-live {
-  0%, 18% { top: -8%; width: 174%; height: 102%; opacity: 1; }
-  100% { top: 30%; width: 76%; height: 68%; opacity: 1; }
+  0%, 18% { transform: translateX(-50%) translateY(-56%) scale(2.29); opacity: 1; }
+  100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {

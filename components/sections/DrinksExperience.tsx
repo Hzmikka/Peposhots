@@ -196,7 +196,7 @@ export function DrinksExperience() {
     const alreadyAdded = favoriteCocktails.includes(current.id);
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (shouldAdd && !alreadyAdded && trayItemsRef.current) {
+    if (shouldAdd && !alreadyAdded && trayItemsRef.current && favoriteCocktails.length < 4) {
       const nextCount = Math.min(4, favoriteCocktails.length + 1);
       const placement = trayLayouts[nextCount - 1][Math.min(nextCount - 1, 3)];
       const trayRect = trayItemsRef.current.getBoundingClientRect();
@@ -217,6 +217,16 @@ export function DrinksExperience() {
       };
       if (reducedMotion) complete();
       else window.setTimeout(complete, 320);
+      return;
+    }
+
+    // Additional favorites remain selectable and removable in the chip list.
+    // Never animate a fifth glass onto the already occupied fourth tray slot.
+    if (shouldAdd && !alreadyAdded) {
+      setFavoriteDrinks((items) => items.includes(current.id) ? items : [...items, current.id]);
+      trayReadyRef.current = false;
+      setTrayReady(false);
+      setDrag(null);
       return;
     }
 
@@ -338,7 +348,7 @@ export function DrinksExperience() {
         </nav>
 
         <header className="cocktail-section-intro tray-prompt">
-          <p className="kicker">ARRASTRA TUS FAVORITOS</p>
+          <p className="kicker">TOCA O ARRASTRA TUS FAVORITOS</p>
         </header>
 
         <div ref={trayRef} className={`drinks-tray ${trayReady ? "is-ready" : ""}`}>
@@ -394,6 +404,21 @@ export function DrinksExperience() {
             {favoriteCocktails.length > 4 ? <span className="tray-more">+{favoriteCocktails.length - 4}</span> : null}
           </div>
         </div>
+        {favoriteCocktails.length > 0 ? (
+          <div className="selected-drinks-list" aria-label="Cócteles seleccionados">
+            <span>Tus cócteles · {favoriteCocktails.length}</span>
+            <div className="selected-drinks-chips">
+              {favoriteCocktails.map((id) => {
+                const drink = drinks.find((item) => item.id === id);
+                return drink ? (
+                  <button key={id} type="button" onClick={() => removeTrayDrink(id)} aria-label={`Quitar ${drink.name} de favoritos`}>
+                    {drink.name} <span aria-hidden="true">×</span>
+                  </button>
+                ) : null;
+              })}
+            </div>
+          </div>
+        ) : null}
       </Container>
       {drinkDrag && typeof document !== "undefined" ? createPortal(
         <div

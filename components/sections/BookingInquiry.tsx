@@ -41,12 +41,20 @@ export function BookingInquiry() {
     const tray = toolsRef.current?.querySelector<HTMLImageElement>("img:last-of-type");
     tray?.addEventListener("load", checkPosition);
     const removeScrollListener = addScrollListener(scroller, checkPosition);
+    const resizeObserver = new ResizeObserver(checkPosition);
+    if (toolsRef.current) resizeObserver.observe(toolsRef.current);
+    if (tray) resizeObserver.observe(tray);
     window.addEventListener("resize", checkPosition);
+    window.visualViewport?.addEventListener("resize", checkPosition);
+    window.visualViewport?.addEventListener("scroll", checkPosition);
     return () => {
       window.cancelAnimationFrame(frame);
       tray?.removeEventListener("load", checkPosition);
+      resizeObserver.disconnect();
       removeScrollListener();
       window.removeEventListener("resize", checkPosition);
+      window.visualViewport?.removeEventListener("resize", checkPosition);
+      window.visualViewport?.removeEventListener("scroll", checkPosition);
     };
   }, [toolsSettled]);
 
