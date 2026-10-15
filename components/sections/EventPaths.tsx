@@ -6,7 +6,7 @@ import { eventPaths } from "@/data/eventPaths";
 import { usePepoExperience } from "@/components/peposhots/PepoExperienceContext";
 import { getElementTop, getScrollContainer, getScrollHeight, getScrollTop, getViewportHeight, scrollToPosition, setScrollTop } from "@/lib/scrolling";
 
-const servicePackages = eventPaths.filter((path) => path.price !== null);
+const servicePackages = eventPaths;
 
 export function EventPaths() {
   const { preferences, setEventPath } = usePepoExperience();
@@ -37,7 +37,7 @@ export function EventPaths() {
 
       const start = getScrollTop(scrollRoot);
       const distance = target - start;
-      const duration = 1350;
+      const duration = Math.min(1050, Math.max(500, Math.abs(distance) * 0.65));
       const startedAt = performance.now();
 
       const step = (now: number) => {
@@ -63,7 +63,7 @@ export function EventPaths() {
           </div>
           <div>
             <p className="path-intro-copy">Encuentra el servicio que encaja con el tamaño de tu celebración y conoce el precio antes de consultar.</p>
-            <p className="path-service-note">Hasta 4 horas de servicio. Montaje previo: 30 minutos adicionales.</p>
+            <p className="path-service-note">Servicio de bartenders por hasta 4 horas, más 30 minutos de montaje. El cliente proporciona el alcohol; confirma barras y extras al consultar.</p>
           </div>
         </header>
 

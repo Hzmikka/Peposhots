@@ -6,9 +6,6 @@ import { Container } from "@/components/ui/Container";
 import { barPriorityByPath, barSetups } from "@/data/barSetups";
 import { usePepoExperience } from "@/components/peposhots/PepoExperienceContext";
 
-const SWIPE_THRESHOLD = 70;
-const DRAG_LIMIT = 180;
-const EXIT_DISTANCE = 440;
 const TRANSITION_MS = 280;
 
 export function BarSetups() {
@@ -20,6 +17,15 @@ export function BarSetups() {
   const [resetting, setResetting] = useState(false);
   const dragStart = useRef(0);
   const dragCurrent = useRef(0);
+  const activeCardRef = useRef<HTMLDivElement>(null);
+
+  function swipeThreshold() {
+    return Math.max(38, Math.min(70, (activeCardRef.current?.offsetWidth ?? 285) * 0.23));
+  }
+
+  function exitDistance() {
+    return Math.max(280, (activeCardRef.current?.offsetWidth ?? 285) * 1.55);
+  }
 
   const ordered = useMemo(() => {
     if (!preferences.eventPath) return barSetups;
@@ -40,7 +46,7 @@ export function BarSetups() {
   function cycle(direction: 1 | -1, exitX?: number) {
     if (animating) return;
     setAnimating(true);
-    const targetX = exitX ?? (direction === 1 ? -EXIT_DISTANCE : EXIT_DISTANCE);
+    const targetX = exitX ?? (direction === 1 ? -exitDistance() : exitDistance());
     dragCurrent.current = targetX;
     setDragX(targetX);
     window.setTimeout(() => {
@@ -59,6 +65,7 @@ export function BarSetups() {
 
   function handlePointerDown(event: PointerEvent<HTMLElement>) {
     if (animating || !event.isPrimary) return;
+    if (event.pointerType === "mouse" && event.button !== 0) return;
     dragStart.current = event.clientX;
     dragCurrent.current = 0;
     setDragging(true);
@@ -67,7 +74,8 @@ export function BarSetups() {
 
   function handlePointerMove(event: PointerEvent<HTMLElement>) {
     if (!dragging || animating) return;
-    const distance = Math.max(-DRAG_LIMIT, Math.min(DRAG_LIMIT, event.clientX - dragStart.current));
+    const limit = Math.max(120, (activeCardRef.current?.offsetWidth ?? 285) * 0.64);
+    const distance = Math.max(-limit, Math.min(limit, event.clientX - dragStart.current));
     dragCurrent.current = distance;
     setDragX(distance);
   }
@@ -75,8 +83,9 @@ export function BarSetups() {
   function handlePointerEnd() {
     if (!dragging) return;
     setDragging(false);
-    if (Math.abs(dragCurrent.current) >= SWIPE_THRESHOLD) {
-      cycle(1, dragCurrent.current > 0 ? EXIT_DISTANCE : -EXIT_DISTANCE);
+    if (Math.abs(dragCurrent.current) >= swipeThreshold()) {
+      const direction = dragCurrent.current < 0 ? 1 : -1;
+      cycle(direction, direction === 1 ? -exitDistance() : exitDistance());
     } else {
       setAnimating(true);
       dragCurrent.current = 0;
@@ -85,8 +94,14 @@ export function BarSetups() {
     }
   }
 
+  function handlePointerCancel() {
+    setDragging(false);
+    dragCurrent.current = 0;
+    setDragX(0);
+  }
+
   const active = ordered[activeIndex];
-  const progress = Math.min(Math.abs(dragX) / SWIPE_THRESHOLD, 1);
+  const progress = Math.min(Math.abs(dragX) / swipeThreshold(), 1);
   const activeRotation = Math.max(-5, Math.min(5, dragX / 32));
 
   return (
@@ -119,10 +134,11 @@ export function BarSetups() {
 
           <div
             className={`deck-image-active ${dragging ? "is-dragging" : ""}`}
+            ref={activeCardRef}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerEnd}
-            onPointerCancel={handlePointerEnd}
+            onPointerCancel={handlePointerCancel}
             style={{ transform: `translateX(${dragX}px) rotate(${activeRotation}deg)`, transition: dragging || resetting ? "none" : undefined }}
             role="group"
             aria-label={`Imagen de ${active.title}`}
