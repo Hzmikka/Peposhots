@@ -34,7 +34,7 @@ function preferenceValues(preferences: PepoPreferences): Partial<BookingFields> 
     guestRange: event?.label ?? "",
     location: preferences.location ?? "",
     serviceNeeded: selectedBar ? "Bartender" : "",
-    venueHasBar: selectedBar?.id === "venue" ? "Sí" : selectedBar ? "No" : "",
+    venueHasBar: selectedBar?.id === "venue" ? "Sí" : "",
     message: ""
   };
 }
@@ -108,6 +108,7 @@ export function BookingInquiryForm() {
   const favoriteDrinks = (preferences.favoriteDrinks ?? [])
     .map((id) => drinks.find((drink) => drink.id === id))
     .filter((drink): drink is (typeof drinks)[number] => Boolean(drink));
+  const selectedEvent = eventPaths.find((event) => event.label === fields.guestRange);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -151,6 +152,13 @@ export function BookingInquiryForm() {
         <div className="booking-form-heading"><span>CHECK YOUR DATE</span><strong>{currentStep === 0 ? "Cuéntanos sobre tu evento" : currentStep === 1 ? "Tu servicio" : currentStep === 2 ? "Tus datos" : "Revisar"}</strong></div>
         <span className="booking-progress">0{currentStep + 1} / 04</span>
       </div>
+      {selectedEvent ? (
+        <p className="booking-selection-note" aria-live="polite">
+          {selectedEvent.label} · {selectedEvent.price === null
+            ? "Cotización personalizada"
+            : `Referencia: ${selectedEvent.price.toLocaleString("en-US")} · hasta 4 h`}
+        </p>
+      ) : null}
       <div key={currentStep} className={`booking-step is-${direction}`}>
         {currentStep === 0 ? (
           <section className="booking-form-section" aria-labelledby="booking-event-title">

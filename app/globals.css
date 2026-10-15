@@ -495,6 +495,7 @@ img { max-width: 100%; }
 .booking-form { width: 100%; height: 100%; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scroll-padding-bottom: 20px; background: #FFF; color: var(--color-1); border-radius: inherit; padding: 16px clamp(12px, 4cqw, 17px); }
 .booking-card-scroll { width: 100%; height: 100%; overflow-y: auto; background: #FFF; color: var(--color-1); border-radius: inherit; padding: 18px 16px 30px; }
 .booking-form-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+.booking-selection-note { margin: -4px 0 14px; padding: 9px 10px; border: 1px solid rgba(9,71,53,.13); border-radius: 10px; background: #EAF5DD; color: #094735; font-size: .72rem; font-weight: 800; line-height: 1.35; }
 .booking-form-heading { display: grid; gap: 3px; }
 .booking-form-heading span { color: var(--color-1); font-size: .52rem; font-weight: 900; letter-spacing: .16em; }
 .booking-form-heading strong { color: var(--color-1); font-family: Haettenschweiler, var(--font-display-web), "Arial Narrow", Impact, sans-serif; font-size: 1.12rem; font-weight: 500; line-height: 1; letter-spacing: .085em; text-transform: uppercase; }

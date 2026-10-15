@@ -6,6 +6,8 @@ import { Container } from "@/components/ui/Container";
 
 import { realEvents, realWorkLookups } from "@/data/realEvents";
 
+// Example reviews stay in seed data for internal use, never in public social proof.
+const publishedEvents = realEvents.filter((event) => !event.sample);
 
 export function RealWorkReviews() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -31,7 +33,7 @@ export function RealWorkReviews() {
 
   function selectRelative(step: number) {
     setActiveIndex((current) => {
-      const next = (current + step + realEvents.length) % realEvents.length;
+      const next = (current + step + publishedEvents.length) % publishedEvents.length;
       scrollCardIntoView(next);
       return next;
     });
@@ -91,7 +93,7 @@ export function RealWorkReviews() {
         </header>
 
         <div ref={archiveRef} className="real-events-archive" aria-label="Archivo de eventos reales">
-          {realEvents.map((event, index) => {
+          {publishedEvents.map((event, index) => {
             const active = index === activeIndex;
             return (
               <article ref={(node) => { cardRefs.current[index] = node; }} className={`real-event-tab${active ? " is-active" : ""}`} key={event.src} onMouseEnter={() => setActiveIndex(index)}>
