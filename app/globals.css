@@ -203,13 +203,13 @@ img { max-width: 100%; }
 .section-paths .path-intro-copy { background: linear-gradient(180deg, #7F936E 0%, #526514 48%, #094735 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; }
 .path-intro-copy { max-width: 60ch; line-height: 1.65; }
 .path-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-.path-card { position: relative; padding: 0; border: 1px solid rgba(255,255,255,.2); border-radius: 22px; overflow: hidden; background: transparent; color: #FFFDF8; text-align: left; cursor: pointer; box-shadow: 0 12px 30px rgba(8,14,9,.18); transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+.path-card { position: relative; display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; padding: 0; border: 1px solid rgba(255,255,255,.2); border-radius: 22px; overflow: hidden; background: transparent; color: #FFFDF8; text-align: left; cursor: pointer; box-shadow: 0 12px 30px rgba(8,14,9,.18); transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
 .path-card:hover, .path-card.is-selected { transform: translateY(-3px); border-color: var(--green); box-shadow: 0 14px 34px rgba(42,42,43,.1); }
-.path-media { position: relative; z-index: 2; display: block; aspect-ratio: 4 / 3; overflow: hidden; isolation: isolate; background: #080E09; }
+.path-media { position: relative; z-index: 2; display: block; flex: 0 0 auto; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; isolation: isolate; background: #080E09; }
 .path-media::after { content: ""; position: absolute; inset: auto 0 0; z-index: 2; height: 30%; pointer-events: none; background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(8,14,9,.08) 100%); backdrop-filter: blur(9px) saturate(1.18); -webkit-backdrop-filter: blur(9px) saturate(1.18); mask-image: linear-gradient(180deg, transparent 0%, #000 55%); -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 55%); }
 .path-media img { z-index: 1; object-fit: cover; object-position: center; opacity: 1; filter: none; mix-blend-mode: normal; transition: transform .45s ease; }
 .path-card:hover .path-media img { transform: scale(1.025); }
-.path-body { position: relative; z-index: 3; display: grid; gap: .55rem; overflow: hidden; isolation: isolate; margin-top: -34px; padding: 2.65rem 3rem 1.05rem 1rem; border-top: 0; background: transparent; box-shadow: none; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); mask-image: linear-gradient(180deg, transparent 0, #000 34px); -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 34px); }
+.path-body { position: relative; z-index: 3; display: grid; flex: 1; align-content: start; gap: .55rem; overflow: hidden; isolation: isolate; margin-top: -34px; padding: 2.65rem 3rem 1.05rem 1rem; border-top: 0; background: transparent; box-shadow: none; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); mask-image: linear-gradient(180deg, transparent 0, #000 34px); -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 34px); }
 .path-body::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(9,71,53,.72), rgba(82,101,20,.58), rgba(34,51,0,.68)); pointer-events: none; }
 .path-body > * { position: relative; z-index: 1; }
 .path-label { font-size: .62rem; letter-spacing: .13em; font-weight: 900; text-transform: uppercase; }
@@ -646,7 +646,7 @@ img { max-width: 100%; }
   .section-paths .section-head { margin-bottom: 1.8rem; }
   .section-paths .section-head h2 { font-size: clamp(2rem, 8.5cqw, 2.55rem); line-height: .98; }
   .section-paths .path-intro-copy { margin: 0; font-size: .85rem; line-height: 1.5; }
-  .path-grid { display: flex; gap: 16px; margin-inline: -16px; padding: 0 16px 14px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; scrollbar-width: none; touch-action: pan-x pan-y; -webkit-overflow-scrolling: touch; }
+  .path-grid { display: flex; gap: 16px; margin-inline: -16px; padding: 6px 16px 14px; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; scrollbar-width: none; touch-action: pan-x pan-y; -webkit-overflow-scrolling: touch; }
   .path-grid::-webkit-scrollbar { display: none; }
   .path-card { flex: 0 0 88%; width: 88%; scroll-snap-align: center; scroll-snap-stop: always; }
   .path-media { aspect-ratio: 4 / 3; }
