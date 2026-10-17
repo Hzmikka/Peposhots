@@ -34,7 +34,7 @@ body {
   max-width: 400px;
   min-height: 100dvh;
   margin-inline: auto;
-  overflow-x: clip;
+  overflow: clip;
   background: #094735;
   container-type: inline-size;
 }
@@ -109,6 +109,7 @@ body {
 }
 
 .page-shell {
+  --cta-dock-offset: 135px;
   position: relative;
   z-index: 1;
   width: 100%;
@@ -578,7 +579,7 @@ img { max-width: 100%; }
 .confirmation-contact a { font-weight: 850; }
 
 .site-footer { min-height: 190px; display: flex; align-items: center; justify-content: center; border: 0; background: #094735; padding: 1.2rem 1.5rem 2rem; }
-.footer-logo { display: block; width: min(36%, 115px); height: auto; object-fit: contain; transform: translateY(89px); }
+.footer-logo { display: block; width: min(36%, 115px); height: auto; object-fit: contain; }
 .mobile-sticky-cta { display: none; }
 .mobile-cta-dock { display: none; }
 
@@ -669,7 +670,7 @@ img { max-width: 100%; }
   .real-photo-grid { grid-template-columns: 1fr 1fr; }
   .proof-dialog { width: min(100%, 400px); margin: auto auto 0; max-width: 400px; }
   .proof-sheet { border-radius: 26px 26px 0 0; padding-bottom: calc(1.25rem + env(safe-area-inset-bottom)); }
-  .mobile-cta-dock { position: relative; top: 135px; z-index: 70; display: block; min-height: 69px; margin: 0 8px; }
+  .mobile-cta-dock { position: relative; top: var(--cta-dock-offset); z-index: 70; display: block; min-height: 69px; margin: 0 8px; }
   .mobile-sticky-cta { position: static; display: flex; width: 100%; gap: 8px; margin: 0; padding: 10px 12px; border: 1px solid rgba(8,14,9,.14); border-radius: 20px; background: rgba(255,253,248,.94); box-shadow: none; backdrop-filter: blur(12px); }
   .mobile-sticky-cta.is-floating { position: fixed; inset: auto 18px max(8px, env(safe-area-inset-bottom)); width: auto; }
   /* Live-site What You Bring composition.
@@ -716,7 +717,7 @@ img { max-width: 100%; }
   .mobile-sticky-cta .btn-primary { border-color: #CEF17B; background: #CEF17B; color: #094735; }
   .mobile-sticky-cta .btn-quiet { border-color: rgba(8,14,9,.16); background: #FFFDF8; color: #080E09; }
   .page-shell:has(.booking-form input:focus, .booking-form select:focus, .booking-form textarea:focus) .mobile-sticky-cta.is-floating { opacity: 0; pointer-events: none; }
-  .site-footer { padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
+  .site-footer { padding-top: calc(var(--cta-dock-offset) + 1rem); padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
   /* Platform-stable typography: desktop keeps the original Windows faces when available;
      Android/iOS use bundled web fallbacks with compatible condensed/editorial metrics. */
   .page-shell.is-live .pepo-hero h1,
