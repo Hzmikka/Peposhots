@@ -13,6 +13,7 @@ export function WhereAndWhen() {
   const [editingZone, setEditingZone] = useState(false);
   const [zoneDraft, setZoneDraft] = useState("");
   const [customZone, setCustomZone] = useState("");
+  const [signatureFallbacks, setSignatureFallbacks] = useState<Partial<Record<ServiceAreaId, boolean>>>({});
   const zoneListRef = useRef<HTMLDivElement>(null);
   const zoneChipRefs = useRef<Partial<Record<ServiceAreaId, HTMLButtonElement | null>>>({});
   const zoneDragRef = useRef<{ pointerId: number; startX: number; scrollLeft: number; moved: boolean } | null>(null);
@@ -195,7 +196,10 @@ export function WhereAndWhen() {
                   src={displayArea.signature.image}
                   alt={selectedArea ? `Cóctel ${displayArea.signature.name}, inspirado en ${displayArea.label}` : `Ejemplo de cóctel signature: ${displayArea.signature.name}`}
                   fill
-                  sizes="(max-width: 400px) 64vw, 264px"
+                  sizes="(max-width: 600px) 88vw, 352px"
+                  loading="eager"
+                  unoptimized={signatureFallbacks[displayArea.id] === true}
+                  onError={() => setSignatureFallbacks((current) => current[displayArea.id] ? current : { ...current, [displayArea.id]: true })}
                 />
               </div>
             </div>

@@ -83,8 +83,8 @@ export function BookingInquiry() {
             <a className="booking-form-link" href="#booking-form" onClick={() => setPhase("settled")}>Ir al formulario ↓</a>
             <div ref={toolsRef} className={`direct-contact-tools ${phase === "pending" ? "is-pending" : "is-settled"}`}>
               <div className="booking-artwork" aria-hidden="true">
-              <Image src="/images/peposhots/booking/coctelera-martini.webp" alt="" width={596} height={1064} sizes="(max-width: 400px) 90vw, 360px" />
-              <Image src="/images/peposhots/booking/bandeja.webp" alt="" width={596} height={1064} sizes="(max-width: 400px) 90vw, 360px" />
+              <Image src="/images/peposhots/booking/coctelera-martini.webp" alt="" width={765} height={1024} sizes="(max-width: 600px) 180vw, 720px" />
+              <Image src="/images/peposhots/booking/bandeja.webp" alt="" width={765} height={1024} sizes="(max-width: 600px) 220vw, 880px" />
               </div>
               <div className="tray-service-card" id="booking-form">
                 <BookingInquiryForm />
