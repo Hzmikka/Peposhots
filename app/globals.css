@@ -265,12 +265,13 @@ img { max-width: 100%; }
 .deck-image-active img { object-fit: cover; object-position: center; pointer-events: none; -webkit-user-drag: none; }
 .deck-image-active { z-index: 3; touch-action: pan-y; user-select: none; cursor: grab; transition: transform .28s cubic-bezier(.2,.8,.2,1); }
 .deck-image-active.is-dragging { cursor: grabbing; }
-.stationary-bar-info { position: relative; z-index: 5; width: min(calc(100% - 24px), 370px); margin: 0 auto 1rem; padding: 1rem 1.25rem 1.1rem; border: 1px solid rgba(42,23,19,.08); border-radius: 24px; background: #FFFDF8 url("/images/peposhots/drinks/boton-martini.webp") calc(100% + 42px) center / auto 115% no-repeat; color: #2A1713; text-align: left; box-shadow: 0 10px 22px rgba(0,0,0,.12); }
+.stationary-bar-info { position: relative; z-index: 5; width: min(calc(100% - 24px), 370px); margin: 0 auto 1rem; padding: 1rem 1.25rem 1.1rem; border: 1px solid rgba(42,23,19,.08); border-radius: 24px; background: linear-gradient(90deg, #FFFDF8 0%, rgba(255,253,248,.96) 58%, rgba(255,253,248,.82) 82%, rgba(255,253,248,.1) 100%) 0 0 / 100% 100% no-repeat, #FFFDF8 url("/images/peposhots/drinks/boton-martini.webp") calc(100% + 42px) center / auto 115% no-repeat; color: #2A1713; text-align: left; box-shadow: 0 10px 22px rgba(0,0,0,.12); }
 .stationary-bar-info > :not(.choose-bar) { max-width: 88%; }
 .stationary-bar-info .bar-recommendation { display: inline-flex; margin-bottom: .45rem; padding: .35rem .55rem; border-radius: 999px; background: #B9E10E; color: #2A1713; font-size: .56rem; line-height: 1; font-weight: 900; letter-spacing: .06em; }
 .stationary-bar-info .bar-index { display: block; margin: 0 0 .2rem; color: #CEF17B; font-size: .66rem; font-weight: 900; letter-spacing: .1em; }
 .stationary-bar-info h3 { margin: 0; color: #094735; font-family: Haettenschweiler, var(--font-display-web), "Arial Narrow", Impact, sans-serif; font-size: 1.4rem; line-height: 1; letter-spacing: .02em; text-transform: uppercase; text-wrap: balance; }
 .stationary-bar-info > p { max-width: 82%; min-height: 1.75rem; margin: .35rem 0 0; color: #094735; font-size: .75rem; line-height: 1.35; letter-spacing: -.015em; white-space: normal; }
+.stationary-bar-info .bar-transport-note { margin-top: .55rem; font-weight: 750; }
 .stationary-bar-info .tag-row { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .55rem; }
 .stationary-bar-info .tag-row span { padding: .35rem .6rem; border: 1px solid rgba(9,71,53,.14); border-radius: 999px; background: #EAF5DD; color: #094735; font-size: .62rem; font-weight: 800; }
 .stationary-bar-info .choose-bar { min-width: 154px; min-height: 38px; margin-top: .7rem; padding: .45rem .75rem; border: 1px solid #CEF17B; border-radius: 999px; background: #CEF17B; color: #094735; font-size: .65rem; font-weight: 850; cursor: pointer; }
@@ -530,6 +531,7 @@ img { max-width: 100%; }
 .booking-form input:focus, .booking-form textarea:focus, .booking-form select:focus { border-color: var(--color-1); background: #FFF; box-shadow: 0 0 0 3px rgba(206,241,123,.42); }
 .booking-form .field-error { color: var(--color-1); font-size: .68rem; text-decoration: underline; }
 .booking-drinks { margin-top: 13px; }
+.booking-bar-note { display: grid; gap: 4px; margin: 0 0 12px; padding: 10px 12px; border: 1px solid rgba(9,71,53,.13); border-radius: 10px; background: #EAF5DD; color: #094735; font-size: .75rem; line-height: 1.4; }
 .booking-drinks h4 { margin: 0 0 6px; color: var(--color-1); font-size: .54rem; letter-spacing: .12em; }
 .booking-tags { display: flex; max-height: 52px; flex-wrap: wrap; align-items: center; gap: 5px; overflow: hidden; }
 .booking-tags button, .booking-tags span { display: inline-flex; min-height: 24px; align-items: center; padding: 5px 8px; border: 1px solid rgba(9,71,53,.12); border-radius: 999px; background: var(--color-3); color: var(--color-1); font-size: .5rem; font-weight: 850; line-height: 1; white-space: nowrap; }

@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import { barSetups } from "@/data/barSetups";
 import type { BookingInquiryInput } from "@/lib/bookingValidation";
 
 function safeText(value: string | undefined) {
@@ -91,6 +92,7 @@ function subjectLine(data: BookingInquiryInput) {
 }
 
 function textBody(data: BookingInquiryInput) {
+  const selectedBar = barSetups.find((bar) => bar.id === data.context?.preferredBarSetup);
   return [
     "NUEVA SOLICITUD DE EVENTO",
     "",
@@ -103,14 +105,15 @@ function textBody(data: BookingInquiryInput) {
     `Invitados: ${data.guestRange}`,
     `Ciudad / ZIP: ${data.location}`,
     `Servicio: ${data.serviceNeeded}`,
-    `¿Venue con barra?: ${data.venueHasBar}`,
+    `¿El lugar tiene barra?: ${data.venueHasBar}`,
+    `Barra elegida: ${selectedBar?.title || data.context?.preferredBarSetup || "—"}`,
+    ...(selectedBar?.logisticsNote ? [`Transporte: ${selectedBar.logisticsNote}`] : []),
     `Horario aproximado: ${data.schedule || "—"}`,
     `Interior / exterior: ${data.setting || "—"}`,
     `Tragos favoritos: ${data.favoriteDrinks?.join(", ") || "—"}`,
     "",
     "Contexto guardado por la web:",
     `Rango de invitados elegido: ${data.context?.eventPath || "—"}`,
-    `Bar setup preferido: ${data.context?.preferredBarSetup || "—"}`,
     `Trago explorado: ${data.context?.exploredDrink || "—"}`,
     "",
     "Comentarios:",
@@ -119,6 +122,7 @@ function textBody(data: BookingInquiryInput) {
 }
 
 function htmlBody(data: BookingInquiryInput) {
+  const selectedBar = barSetups.find((bar) => bar.id === data.context?.preferredBarSetup);
   const row = (label: string, value: string | undefined) => `
     <tr>
       <td style="padding:7px 10px;color:#526514;font-weight:700;vertical-align:top;white-space:nowrap">${escapeHtml(label)}</td>
@@ -142,7 +146,9 @@ function htmlBody(data: BookingInquiryInput) {
           ${row("Invitados", data.guestRange)}
           ${row("Ciudad / ZIP", data.location)}
           ${row("Servicio", data.serviceNeeded)}
-          ${row("Venue con barra", data.venueHasBar)}
+          ${row("Barra del lugar", data.venueHasBar)}
+          ${row("Barra elegida", selectedBar?.title || data.context?.preferredBarSetup)}
+          ${selectedBar?.logisticsNote ? row("Transporte", selectedBar.logisticsNote) : ""}
           ${row("Horario", data.schedule)}
           ${row("Interior / exterior", data.setting)}
           ${row("Tragos favoritos", data.favoriteDrinks?.join(", "))}

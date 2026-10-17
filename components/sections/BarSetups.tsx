@@ -213,6 +213,7 @@ export function BarSetups() {
           <span className="bar-index">{String(activeIndex + 1).padStart(2, "0")}</span>
           <h3>{active.title}</h3>
           <p>{active.description}</p>
+          {active.logisticsNote ? <p className="bar-transport-note">{active.logisticsNote}</p> : null}
           <div className="tag-row">{active.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
           <button type="button" className="choose-bar" onClick={() => setPreferredBarSetup(active.id)}>
             {preferences.preferredBarSetup === active.id ? "Barra elegida ✓" : "Elegir esta barra"}

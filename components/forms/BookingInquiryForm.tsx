@@ -180,6 +180,7 @@ export function BookingInquiryForm() {
     .map((id) => drinks.find((drink) => drink.id === id))
     .filter((drink): drink is (typeof drinks)[number] => Boolean(drink));
   const selectedEvent = eventPaths.find((event) => event.label === fields.guestRange);
+  const selectedBar = barSetups.find((bar) => bar.id === preferences.preferredBarSetup);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -245,9 +246,15 @@ export function BookingInquiryForm() {
         ) : currentStep === 1 ? (
           <section className="booking-form-section" aria-labelledby="booking-service-title">
             <h3 id="booking-service-title">TU SERVICIO</h3>
+            {selectedBar ? (
+              <p className="booking-bar-note">
+                <strong>{selectedBar.title}</strong>
+                {selectedBar.logisticsNote ? <span>{selectedBar.logisticsNote}</span> : null}
+              </p>
+            ) : null}
             <div className="booking-form-grid">
               <label>Servicio<select name="serviceNeeded" value={fields.serviceNeeded} onChange={updateField} required><option value="" disabled>Selecciona</option><option>Bartender</option><option>Mesero</option><option>Bartender + mesero</option><option>Aún no sé</option></select>{fieldError("serviceNeeded")}</label>
-              <label>¿El venue ya tiene barra?<select name="venueHasBar" value={fields.venueHasBar} onChange={updateField} required><option value="" disabled>Selecciona</option><option>Sí</option><option>No</option><option>No estoy seguro</option></select>{fieldError("venueHasBar")}</label>
+              <label>¿El lugar ya tiene barra?<select name="venueHasBar" value={fields.venueHasBar} onChange={updateField} required><option value="" disabled>Selecciona</option><option>Sí</option><option>No</option><option>No estoy seguro</option></select>{fieldError("venueHasBar")}</label>
               <label>Horario aproximado<input name="schedule" value={fields.schedule} onChange={updateField} placeholder="6:00 PM – 11:00 PM" /></label>
               <label>Interior / exterior<select name="setting" value={fields.setting} onChange={updateField}><option value="">Selecciona</option><option>Interior</option><option>Exterior</option><option>Ambos</option><option>No estoy seguro</option></select></label>
             </div>
@@ -268,7 +275,7 @@ export function BookingInquiryForm() {
         ) : (
           <section className="booking-review" aria-label="Revisar solicitud">
             <ReviewGroup title="TU EVENTO" step={0} onEdit={goToStep} items={[["Fecha", fields.eventDate], ["Tipo", fields.eventType], ["Invitados", fields.guestRange], ["Zona", fields.location]]} />
-            <ReviewGroup title="TU SERVICIO" step={1} onEdit={goToStep} items={[["Servicio", fields.serviceNeeded], ["Barra", fields.venueHasBar], ["Horario", fields.schedule || "—"], ["Espacio", fields.setting || "—"], ["Tragos", favoriteDrinks.map((drink) => drink.name).join(", ") || "—"]]} />
+            <ReviewGroup title="TU SERVICIO" step={1} onEdit={goToStep} items={[["Servicio", fields.serviceNeeded], ["Barra del lugar", fields.venueHasBar], ...(selectedBar ? [["Barra elegida", selectedBar.title]] : []), ...(selectedBar?.logisticsNote ? [["Transporte", selectedBar.logisticsNote]] : []), ["Horario", fields.schedule || "—"], ["Espacio", fields.setting || "—"], ["Tragos", favoriteDrinks.map((drink) => drink.name).join(", ") || "—"]]} />
             <ReviewGroup title="TUS DATOS" step={2} onEdit={goToStep} items={[["Nombre", fields.name], ["Teléfono", fields.phone], ["Email", fields.email]]} />
             <p className="booking-privacy-note">Al enviar, PepoShots usará estos datos para responder a tu solicitud. <a href="/privacy" target="_blank" rel="noreferrer">Privacidad</a>.</p>
             <div className="booking-actions"><button type="button" className="booking-back" onClick={() => goToStep(2)}>← Atrás</button><button className="booking-next" type="submit" disabled={status === "submitting"}>{status === "submitting" ? "Enviando…" : "Consultar fecha"}</button></div>

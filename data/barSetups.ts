@@ -4,6 +4,7 @@ export type BarSetup = {
   id: string;
   title: string;
   description: string;
+  logisticsNote?: string;
   tags: string[];
   image: string;
 };
@@ -25,9 +26,10 @@ export const barSetups: BarSetup[] = [
   },
   {
     id: "signature-dark",
-    title: "Signature Dark Bar",
-    description: "Más presencia para eventos de noche.",
-    tags: ["Evening", "Statement"],
+    title: "Barra PepoShots",
+    description: "Para un lugar sin barra o para sumar una segunda estación.",
+    logisticsNote: "Transporte a coordinar al consultar.",
+    tags: ["Sin barra en el lugar", "Segunda estación"],
     image: "/images/peposhots/bars/signature-dark.webp"
   },
   {
