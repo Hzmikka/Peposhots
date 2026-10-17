@@ -6,9 +6,6 @@ import { Container } from "@/components/ui/Container";
 
 import { realEvents, realWorkLookups } from "@/data/realEvents";
 
-// Example reviews stay in seed data for internal use, never in public social proof.
-const publishedEvents = realEvents.filter((event) => !event.sample);
-
 export function RealWorkReviews() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const archiveRef = useRef<HTMLDivElement>(null);
@@ -33,7 +30,7 @@ export function RealWorkReviews() {
 
   function selectRelative(step: number) {
     setActiveIndex((current) => {
-      const next = (current + step + publishedEvents.length) % publishedEvents.length;
+      const next = (current + step + realEvents.length) % realEvents.length;
       scrollCardIntoView(next);
       return next;
     });
@@ -93,8 +90,10 @@ export function RealWorkReviews() {
         </header>
 
         <div ref={archiveRef} className="real-events-archive" aria-label="Archivo de eventos reales">
-          {publishedEvents.map((event, index) => {
+          {realEvents.map((event, index) => {
             const active = index === activeIndex;
+            // Real photos remain visible even when their paired review is sample copy.
+            const review = event.sample ? undefined : event.review;
             return (
               <article ref={(node) => { cardRefs.current[index] = node; }} className={`real-event-tab${active ? " is-active" : ""}`} key={event.src} onMouseEnter={() => setActiveIndex(index)}>
                 <span className="real-event-media">
@@ -105,15 +104,14 @@ export function RealWorkReviews() {
                   <span className="real-event-proof" id="real-event-proof" aria-live="polite">
                     <span className="real-event-heading">
                       <strong>{event.descriptor}</strong>
-                      {typeof event.rating === "number" ? <b aria-label={`${event.rating} de 5 estrellas`}>{"★".repeat(event.rating)}{"☆".repeat(5 - event.rating)}</b> : null}
+                      {review && typeof event.rating === "number" ? <b aria-label={`${event.rating} de 5 estrellas`}>{"★".repeat(event.rating)}{"☆".repeat(5 - event.rating)}</b> : null}
                     </span>
-                    {event.author ? <span className="real-event-author">{event.author}</span> : null}
-                    <ReviewExcerpt key={event.src} text={event.review} />
-                    {event.reviewSource ? <span className={`real-event-source${event.sample ? " is-sample" : ""}`}>{event.reviewSource}</span> : null}
+                    {review && event.author ? <span className="real-event-author">{event.author}</span> : null}
+                    {review ? <ReviewExcerpt key={event.src} text={review} /> : <span className="real-event-caption">{event.alt}</span>}
                     <button className="real-event-google" type="button" onClick={() => open("review")}>DEJA TU RESEÑA AQUÍ ↗</button>
                   </span>
                 ) : (
-                  <button className="real-event-select" type="button" onFocus={() => selectEvent(index)} onClick={() => selectEvent(index)} onKeyDown={handleKeyDown} aria-label={`Ver ${event.descriptor.toLowerCase()}`}><span className="real-event-collapsed" aria-hidden="true"><span>{`${"★".repeat(event.rating)}${"☆".repeat(5 - event.rating)}`}</span></span></button>
+                  <button className="real-event-select" type="button" onFocus={() => selectEvent(index)} onClick={() => selectEvent(index)} onKeyDown={handleKeyDown} aria-label={`Ver foto: ${event.alt}`}><span className="real-event-collapsed" aria-hidden="true"><span>{review ? `${"★".repeat(event.rating)}${"☆".repeat(5 - event.rating)}` : "VER FOTO"}</span></span></button>
                 )}
               </article>
             );
