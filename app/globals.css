@@ -455,17 +455,18 @@ img { max-width: 100%; }
 .zone-custom-editor input { width: 144px; min-width: 0; padding: .55rem 0 .55rem .78rem; border: 0; outline: 0; background: transparent; color: inherit; font-size: 16px; font-weight: 900; line-height: 1; cursor: text; touch-action: manipulation; user-select: text; -webkit-user-select: text; }
 .zone-custom-editor input::placeholder { color: currentColor; opacity: .68; }
 .zone-custom-editor button { align-self: stretch; min-width: 36px; padding: 0; border: 0; background: transparent; color: inherit; font-weight: 900; cursor: pointer; }
-.signature-area { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .95fr); align-items: start; gap: 6px; margin-top: 1.75rem; margin-bottom: 1rem; }
-.signature-cocktail-art { position: relative; z-index: 1; width: 164%; max-width: none; aspect-ratio: 1; justify-self: end; align-self: start; margin-right: -24%; border-radius: 50%; background: transparent; animation: signature-cocktail-in 460ms cubic-bezier(.22,.75,.18,1) both; will-change: transform, opacity; }
-.signature-cocktail-art.is-coconut-grove { width: 178%; }
+.signature-area { position: relative; display: grid; grid-template-columns: minmax(min(7rem, 50%), .36fr) minmax(0, .64fr); align-items: start; gap: 12px; margin-top: 1.75rem; margin-bottom: 1rem; }
+.signature-cocktail-frame { min-width: 0; clip-path: inset(-30% -100% -30% 0); }
+.signature-cocktail-art { position: relative; z-index: 1; width: calc(100% + 1.25rem); max-width: none; aspect-ratio: 1; border-radius: 50%; background: transparent; animation: signature-cocktail-in 460ms cubic-bezier(.22,.75,.18,1) both; will-change: transform, opacity; }
+.signature-cocktail-art.is-coconut-grove { width: calc(100% + 2rem); }
 .signature-cocktail-art.is-wynwood img,
 .signature-cocktail-art.is-little-havana img { transform: rotate(16deg); transform-origin: center; }
 .signature-cocktail-art.is-south-beach img { transform: rotate(75deg); }
 .signature-cocktail-art img { object-fit: contain; }
-.signature-area-copy { min-width: 0; color: #094735; }
+.signature-area-copy { min-width: 0; overflow-wrap: anywhere; color: #094735; }
 .signature-eyebrow { margin: 0 0 6px; color: #094735; font-size: .49rem; font-weight: 900; line-height: 1.2; letter-spacing: .12em; text-transform: uppercase; }
 .signature-area-copy h3 { margin: 0; color: #094735; font-family: Haettenschweiler, var(--font-display-web), "Arial Narrow", Impact, sans-serif; font-size: 1.36rem; font-weight: 500; line-height: .93; letter-spacing: .025em; text-transform: uppercase; }
-.signature-area-copy small { display: block; max-width: 23ch; margin-top: 8px; color: #094735; font-size: .55rem; line-height: 1.4; margin-bottom: 10px; }
+.signature-area-copy small { display: block; width: 100%; margin-top: 8px; color: #094735; font-size: .55rem; line-height: 1.4; margin-bottom: 10px; }
 @keyframes signature-cocktail-in { from { opacity: .45; transform: rotate(-90deg) scale(.96); } to { opacity: 1; transform: rotate(0) scale(1); } }
 .timing-card { border-bottom: 1px solid var(--line); margin-top: .25rem; padding-bottom: 1.3rem; display: grid; gap: .4rem; }
 .timing-card span { color: #094735; font-size: .65rem; font-weight: 900; letter-spacing: .14em; }

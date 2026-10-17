@@ -189,13 +189,15 @@ export function WhereAndWhen() {
               <h3>{selectedArea ? selectedArea.signature.name : "ELIGE TU ZONA. DESCUBRE SU TRAGO."}</h3>
               <small>{selectedArea ? "Tu zona activa una propuesta distinta, inspirada en el lugar de tu evento." : "Cada punto activa un cóctel signature inspirado en esa parte de Miami."}</small>
             </div>
-            <div className={`signature-cocktail-art is-${displayArea.id}`} key={displayArea.id}>
-              <Image
-                src={displayArea.signature.image}
-                alt={selectedArea ? `Cóctel ${displayArea.signature.name}, inspirado en ${displayArea.label}` : `Ejemplo de cóctel signature: ${displayArea.signature.name}`}
-                fill
-                sizes="(max-width: 400px) 44vw, 176px"
-              />
+            <div className="signature-cocktail-frame">
+              <div className={`signature-cocktail-art is-${displayArea.id}`} key={displayArea.id}>
+                <Image
+                  src={displayArea.signature.image}
+                  alt={selectedArea ? `Cóctel ${displayArea.signature.name}, inspirado en ${displayArea.label}` : `Ejemplo de cóctel signature: ${displayArea.signature.name}`}
+                  fill
+                  sizes="(max-width: 400px) 64vw, 264px"
+                />
+              </div>
             </div>
           </section>
 
