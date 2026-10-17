@@ -89,11 +89,10 @@ export function RealWorkReviews() {
           <p>Sin estudio ni campaña. Así se ve PepoShots cuando empieza la fiesta.</p>
         </header>
 
-        <div ref={archiveRef} className="real-events-archive" aria-label="Archivo de eventos reales">
+        <div ref={archiveRef} className="real-events-archive" aria-label="Cócteles reales y reseñas de muestra">
           {realEvents.map((event, index) => {
             const active = index === activeIndex;
-            // Real photos remain visible even when their paired review is sample copy.
-            const review = event.sample ? undefined : event.review;
+            const review = event.review;
             return (
               <article ref={(node) => { cardRefs.current[index] = node; }} className={`real-event-tab${active ? " is-active" : ""}`} key={event.src} onMouseEnter={() => setActiveIndex(index)}>
                 <span className="real-event-media">
@@ -102,6 +101,7 @@ export function RealWorkReviews() {
                 </span>
                 {active ? (
                   <span className="real-event-proof" id="real-event-proof" aria-live="polite">
+                    {event.sample ? <span className="real-event-example">DEMO · RESEÑA DE MUESTRA</span> : null}
                     <span className="real-event-heading">
                       <strong>{event.descriptor}</strong>
                       {review && typeof event.rating === "number" ? <b aria-label={`${event.rating} de 5 estrellas`}>{"★".repeat(event.rating)}{"☆".repeat(5 - event.rating)}</b> : null}
