@@ -320,7 +320,8 @@ img { max-width: 100%; }
 .tray-drink img { object-fit: contain; object-position: center bottom; pointer-events: none; -webkit-user-drag: none; }
 /* Keep hit areas on each glass so overlapping transparent image margins don't block its neighbors. */
 .tray-drink-select { position: absolute; inset: 0 25%; z-index: 1; padding: 0; border: 0; border-radius: 12px; background: transparent; cursor: pointer; pointer-events: auto; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
-.tray-drink-remove { position: absolute; top: 6%; right: 12%; z-index: 2; display: grid; width: 44px; height: 44px; place-items: center; padding: 0; border: 1px solid rgba(9,71,53,.2); border-radius: 50%; background: #CEF17B; color: #094735; cursor: pointer; pointer-events: auto; touch-action: manipulation; box-shadow: 0 2px 8px rgba(8,14,9,.12); }
+.tray-drink-remove { position: absolute; top: 6%; right: 12%; z-index: 2; display: grid; width: 28px; height: 28px; place-items: center; padding: 0; border: 1px solid rgba(9,71,53,.2); border-radius: 50%; background: #CEF17B; color: #094735; cursor: pointer; pointer-events: auto; touch-action: manipulation; box-shadow: 0 2px 8px rgba(8,14,9,.12); }
+.tray-drink-remove svg { width: 12px; height: 12px; }
 .tray-drink-remove:hover { background: #CEECB3; }
 .tray-drink-select:focus-visible,
 .tray-drink-remove:focus-visible { outline: 2px solid #094735; outline-offset: 3px; }

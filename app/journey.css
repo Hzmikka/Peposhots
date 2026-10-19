@@ -1,0 +1,173 @@
+/* The new storyboard exists only in the spacious live canvas. The original
+   phone / demo composition and its shaker keep their own layout and motion. */
+.cocktail-journey { display: contents; }
+.journey-motion-layer, .pepo-hero-panorama { display: none; }
+
+@container pepo (min-width: 600px) {
+  .cocktail-journey { display: block; position: relative; isolation: isolate; }
+  .journey-motion-layer {
+    --journey-x: 0px;
+    --journey-y: 0px;
+    --journey-angle: 90deg;
+    --journey-size: 520px;
+    --journey-flow: 0;
+    --journey-pool: 0;
+    --journey-liquid-opacity: 0;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    overflow: clip;
+    pointer-events: none;
+    user-select: none;
+  }
+  .journey-shaker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    width: var(--journey-size);
+    aspect-ratio: 3 / 2;
+    opacity: 0;
+    transform: translate3d(var(--journey-x), var(--journey-y), 0) translate(-50%, -50%) rotate(var(--journey-angle));
+    transform-origin: center;
+    will-change: transform;
+  }
+  .journey-motion-layer[data-ready="true"] .journey-shaker { opacity: 1; }
+  .journey-shaker img { object-fit: contain; pointer-events: none; }
+  .journey-liquid { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; overflow: visible; }
+  .journey-liquid-fall { opacity: var(--journey-liquid-opacity); }
+  .journey-liquid-stream { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--journey-flow)); }
+  .journey-liquid-pool { display: none; }
+
+  /* These sections share the journey's stacking context: backgrounds at 0,
+     decorative shaker / liquid at 1, readable and interactive content at 2. */
+  .cocktail-journey .path-bars-scene,
+  .cocktail-journey .section-drinks { isolation: auto; }
+  .cocktail-journey .path-bars-shaker { display: none; }
+  .cocktail-journey .section-paths::before,
+  .cocktail-journey .section-bars::before,
+  .cocktail-journey .section-drinks::before { z-index: 0; }
+  .cocktail-journey .section-paths > .site-container,
+  .cocktail-journey .section-bars > .site-container,
+  .cocktail-journey .section-drinks > .site-container { position: relative; z-index: 2; }
+
+  /* Panorama fills the hero. Tablets keep enough height for readable copy;
+     desktop uses a slightly shorter panorama below the navigation. */
+  .page-shell.is-live .pepo-hero { height: 48cqw; min-height: 560px; background: #081811; }
+  .page-shell.is-live .pepo-hero-image { width: 100% !important; object-position: center; }
+  .page-shell.is-live .pepo-hero-panorama { display: block; inset: 0 !important; width: 100% !important; height: 100% !important; object-fit: cover; object-position: center; z-index: -3; }
+  .pepo-hero-overlay { background: linear-gradient(90deg, rgba(8, 24, 17, .82), rgba(8, 24, 17, .58) 33%, rgba(8, 24, 17, .08) 68%), linear-gradient(0deg, rgba(8, 14, 9, .7), transparent 40%); }
+  .page-shell.is-live .pepo-hero-inner { min-height: 100%; height: 100%; align-items: flex-start; padding-top: clamp(12px, 2cqw, 32px); padding-bottom: clamp(28px, 4cqw, 64px); }
+  .page-shell.is-live .pepo-hero h1 { font-size: clamp(2.8rem, 6.2cqw, 6.5rem); }
+  .pepo-hero-copy { position: relative; z-index: 2; }
+
+  /* Keep the service introduction together on the left side of the panel. */
+  .section-paths .section-head.split-head {
+    position: relative;
+    top: -32px;
+    display: grid;
+    grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+    gap: 16px 24px;
+    align-items: start;
+    align-content: start;
+    min-height: 0;
+    margin-bottom: 0;
+  }
+  .section-paths .section-head > div:first-child { grid-column: 1 / -1; grid-row: 1; justify-self: start; width: fit-content; max-width: 100%; padding: 18px; border-radius: 24px; background: linear-gradient(90deg, rgba(255, 255, 255, .74), rgba(255, 255, 255, .97)); backdrop-filter: blur(3px); }
+  .section-paths .section-head > div:last-child { grid-column: 1; grid-row: 2; padding: 0 18px 18px; border-radius: 0 0 24px 24px; background: rgba(255, 255, 255, .9); }
+  .section-paths .section-head h2 { max-width: none; white-space: nowrap; font-size: clamp(1.5rem, 4cqw, 3.8rem); }
+  .section-paths .path-intro-copy { font-size: clamp(.82rem, 1.15cqw, .95rem); }
+
+  /* Keep the cocktail workspace close to the preceding bar section. */
+  .page-shell.is-live .section-drinks { padding-top: clamp(80px, 10cqw, 140px); }
+  .drinks-wide-intro { position: relative; z-index: 2; max-width: 620px; }
+  .cocktail-showcase { grid-column: 2; grid-row: 2; }
+  .cocktail-selection { grid-column: 1; grid-row: 2; }
+  .page-shell.is-live .drinks-tray { width: min(115%, 620px); }
+}
+
+@container pepo (min-width: 900px) {
+  .page-shell.is-live .pepo-hero { min-height: 520px; }
+}
+
+@container pepo (min-width: 1024px) {
+  .page-shell.is-live .booking-artwork { display: none; }
+  .page-shell.is-live .section-where { padding-bottom: 24px; }
+  .page-shell.is-live .section-booking { padding-top: 64px; }
+  .page-shell.is-live .section-where { position: relative; isolation: isolate; margin-top: 0; padding-top: 84px; background: linear-gradient(180deg, #F8FDEA 0, #FDFEF8 45px, #FFF 120px); }
+  .page-shell.is-live .section-real-work { background: linear-gradient(180deg, #FFF 0%, #FFF 12%, #ECE2CE 27%, #CEF17B 48%, #CEF17B 72%, #E7F8BD 88%, #F8FDEA 100%); }
+  .page-shell.is-live .zone-list {
+    position: relative;
+    top: -50px;
+    left: -10cqw;
+    width: 64cqw;
+    max-width: none;
+    flex-wrap: nowrap;
+    overflow: visible;
+    padding-bottom: 8px;
+  }
+  .page-shell.is-live .zone-chip { white-space: nowrap; font-size: .7rem; padding-inline: 10px; }
+  .page-shell.is-live .signature-cocktail-art,
+  .page-shell.is-live .signature-cocktail-art.is-coconut-grove { width: 175%; max-width: none; margin-left: -105%; top: -80px; }
+  .page-shell.is-live .miami-map { top: -60px; }
+  .page-shell.is-live .signature-area-copy { position: relative; top: 200px; }
+  .page-shell.is-live .where-map-explorer .timing-card { position: relative; top: -50px; left: -12cqw; width: 44cqw; max-width: none; margin-top: 16px; }
+  .page-shell.is-live .section-real-work { margin-top: -320px; padding-top: 24px; padding-bottom: 0; }
+  .page-shell.is-live .real-events-layout { top: 0; margin-top: -100px; margin-bottom: 0; }
+  .page-shell.is-live .real-events-lookup.lookup-1,
+  .page-shell.is-live .lookup-copy.copy-1 { grid-column: 2; }
+  .page-shell.is-live .real-events-lookup.lookup-2,
+  .page-shell.is-live .lookup-copy.copy-2 { grid-column: 1; }
+  .page-shell.is-live .real-events-lookup.lookup-2 { transform: translate(-145px, -130px) rotate(-10deg); }
+  .page-shell.is-live .real-events-lookup.lookup-3 { transform: translate(145px, -130px) rotate(90deg); }
+  .page-shell.is-live .lookup-copy.copy-1 {
+    grid-row: 1;
+    align-self: start;
+    top: -60px;
+    text-align: center;
+  }
+  .page-shell.is-live .lookup-copy.copy-2 { transform: translate(115px, -150px); text-align: center; }
+  .page-shell.is-live .lookup-copy.copy-3 { transform: translate(-115px, -150px); text-align: center; }
+  .page-shell.is-live .lookup-copy strong { font-size: clamp(1.4rem, 2cqw, 2rem); }
+  .page-shell.is-live .pepo-hero { height: 44cqw; min-height: 0; }
+  .cocktail-journey .section-paths { top: -56px; }
+  .cocktail-journey .cocktail-showcase { position: relative; top: -280px; left: -110px; }
+  .cocktail-journey .drinks-wide-intro { left: 60px; }
+  .cocktail-journey .cocktail-selection { position: relative; top: -140px; }
+  .cocktail-journey .tray-prompt { position: relative; top: -100px; left: 145px; margin: 20px 0 0; }
+  .page-shell.is-live .cocktail-journey .drinks-tray { margin-top: 32px; }
+  .page-shell.is-live .cocktail-journey .section-drinks { margin-top: -220px; padding-top: 32px; }
+  .cocktail-journey .section-bars::before {
+    bottom: 220px;
+    background: linear-gradient(180deg, #094735 0%, #094735 20%, #285F40 40%, #57884F 60%, #94BA65 80%, #CEF17B 100%);
+  }
+  .cocktail-journey .section-bars > .site-container {
+    width: 50%;
+    top: -150px;
+    left: 10.5cqw;
+    grid-template-areas: "deck heading" "deck info" "deck navigation" "bridge bridge";
+    max-width: none;
+    margin-left: 0;
+    margin-right: auto;
+    padding-inline: 24px;
+    column-gap: 20px;
+    row-gap: 16px;
+  }
+  .cocktail-journey .section-bars .section-head { padding: 18px; border-radius: 22px; }
+  .cocktail-journey .section-bars .section-head h2 { font-size: clamp(1.5rem, 2.2cqw, 2.2rem); line-height: 1.05; }
+  .cocktail-journey .section-bars .section-head > p { font-size: .75rem; }
+  .cocktail-journey .stationary-bar-info { padding: 18px; border-radius: 22px; }
+  .cocktail-journey .stationary-bar-info h3 { font-size: 1.5rem; }
+  .cocktail-journey .stationary-bar-info > p { font-size: .75rem; line-height: 1.4; }
+  .cocktail-journey .stationary-bar-info .tag-row span { font-size: .62rem; }
+  .cocktail-journey .stationary-bar-info .choose-bar { min-width: 0; min-height: 38px; padding: 10px 14px; font-size: .7rem; }
+  .cocktail-journey .section-bars .section-bridge { margin-top: 8px; font-size: .75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @container pepo (min-width: 600px) {
+    .journey-shaker { will-change: auto; }
+    .journey-liquid { display: none; }
+  }
+}

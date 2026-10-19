@@ -34,7 +34,7 @@ export const drinks = [
   {
     id: "sex-on-the-beach",
     name: "SEX ON THE BEACH",
-    notes: ["Peach", "Cítrico", "Cranberry"],
+    notes: ["Melocotón", "Cítrico", "Arándano rojo"],
     line: "Frutal, brillante y hecho para una fiesta.",
     drinkImage: "/images/peposhots/drinks/drinks/sex-on-the-beach.webp",
     textureImage: "/images/peposhots/drinks/textures/sex-on-the-beach-2026.webp"

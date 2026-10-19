@@ -2,19 +2,13 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type Dispatch, type ReactNode, type SetStateAction } from "react";
 import type { EventPathId } from "@/lib/types";
-
-export type PepoPreferences = {
-  eventPath?: EventPathId;
-  preferredBarSetup?: string;
-  exploredDrink?: string;
-  favoriteDrinks?: string[];
-  location?: string;
-};
+import { sanitizePreferences, type PepoPreferences } from "@/lib/preferences";
+export type { PepoPreferences } from "@/lib/preferences";
 
 type ContextValue = {
   preferences: PepoPreferences;
-  setEventPath: (id: EventPathId) => void;
-  setPreferredBarSetup: (id: string) => void;
+  setEventPath: (id?: EventPathId) => void;
+  setPreferredBarSetup: (id?: string) => void;
   setExploredDrink: (id: string) => void;
   setFavoriteDrinks: Dispatch<SetStateAction<string[]>>;
   setLocation: (location?: string) => void;
@@ -32,7 +26,7 @@ export function PepoExperienceProvider({ children }: { children: ReactNode }) {
     const frame = window.requestAnimationFrame(() => {
       try {
         const saved = window.localStorage.getItem(STORAGE_KEY);
-        if (saved) setPreferences(JSON.parse(saved) as PepoPreferences);
+        if (saved) setPreferences(sanitizePreferences(JSON.parse(saved)));
       } catch {
         // A blocked storage API should not interrupt the booking flow.
       }

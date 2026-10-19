@@ -17,6 +17,7 @@ export type BookingInquiryInput = {
     eventPath?: string;
     preferredBarSetup?: string;
     exploredDrink?: string;
+    language?: "es" | "en";
   };
 };
 
@@ -36,7 +37,7 @@ function cleanStringList(value: unknown, maxItems = 9, maxItemLength = 80) {
     .filter(Boolean);
 }
 
-function localDateKey(date: Date) {
+export function localDateKey(date: Date) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/New_York",
     year: "numeric",
@@ -47,7 +48,7 @@ function localDateKey(date: Date) {
   return `${map.year}-${map.month}-${map.day}`;
 }
 
-export function validateBookingInquiry(input: unknown): BookingValidationResult {
+export function validateBookingInquiry(input: unknown, now = new Date()): BookingValidationResult {
   const raw = (input && typeof input === "object" ? input : {}) as Record<string, unknown>;
   const contextRaw = raw.context && typeof raw.context === "object" ? raw.context as Record<string, unknown> : {};
 
@@ -69,7 +70,8 @@ export function validateBookingInquiry(input: unknown): BookingValidationResult 
     context: {
       eventPath: clean(contextRaw.eventPath, 80),
       preferredBarSetup: clean(contextRaw.preferredBarSetup, 80),
-      exploredDrink: clean(contextRaw.exploredDrink, 80)
+      exploredDrink: clean(contextRaw.exploredDrink, 80),
+      language: contextRaw.language === "en" ? "en" : "es"
     }
   };
 
@@ -93,7 +95,7 @@ export function validateBookingInquiry(input: unknown): BookingValidationResult 
       && parsed.getUTCMonth() === month - 1
       && parsed.getUTCDate() === day;
     if (!isRealDate) errors.eventDate = "Selecciona una fecha válida.";
-    else if (data.eventDate < localDateKey(new Date())) errors.eventDate = "Selecciona una fecha de hoy en adelante.";
+    else if (data.eventDate < localDateKey(now)) errors.eventDate = "Selecciona una fecha de hoy en adelante.";
   }
 
   return Object.keys(errors).length ? { ok: false, errors } : { ok: true, data };

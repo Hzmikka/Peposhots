@@ -99,6 +99,7 @@ function textBody(data: BookingInquiryInput) {
     `Nombre: ${data.name}`,
     `Teléfono: ${data.phone}`,
     `Email: ${data.email}`,
+    `Idioma de respuesta: ${data.context?.language === "en" ? "English" : "Español"}`,
     "",
     `Tipo de evento: ${data.eventType}`,
     `Fecha: ${data.eventDate}`,
@@ -141,6 +142,7 @@ function htmlBody(data: BookingInquiryInput) {
           ${row("Nombre", data.name)}
           ${row("Teléfono", data.phone)}
           ${row("Email", data.email)}
+          ${row("Idioma de respuesta", data.context?.language === "en" ? "English" : "Español")}
           ${row("Tipo de evento", data.eventType)}
           ${row("Fecha", data.eventDate)}
           ${row("Invitados", data.guestRange)}
@@ -185,6 +187,8 @@ export async function deliverReviewEmail(data: {
   eventType?: string;
   text: string;
   rating?: string;
+  mode?: "photo" | "review";
+  language?: "es" | "en";
   attachment?: { filename: string; content: Buffer; contentType?: string };
 }) {
   const config = getMailConfig();
@@ -194,24 +198,26 @@ export async function deliverReviewEmail(data: {
     from: `"PepoShots Website" <${config.user}>`,
     to: config.to,
     replyTo: data.email,
-    subject: `Nueva reseña PepoShots — ${safeText(data.eventType) || "Evento"}`,
+    subject: `${data.mode === "photo" ? "Nueva foto" : "Nueva reseña"} PepoShots — ${safeText(data.eventType) || "Evento"}`,
     text: [
-      "RESEÑA RECIBIDA — PENDIENTE DE REVISIÓN",
+      data.mode === "photo" ? "FOTO RECIBIDA — PENDIENTE DE REVISIÓN" : "RESEÑA RECIBIDA — PENDIENTE DE REVISIÓN",
       "",
       `Nombre: ${data.name}`,
       `Email: ${data.email}`,
       `Evento: ${data.eventType || "—"}`,
       `Calificación: ${data.rating || "—"}`,
+      `Idioma de respuesta: ${data.language === "en" ? "English" : "Español"}`,
       "",
       data.text,
     ].join("\n"),
     html: `
       <div style="font-family:Arial,sans-serif;color:#094735">
-        <h2>Nueva reseña PepoShots</h2>
+        <h2>${data.mode === "photo" ? "Nueva foto" : "Nueva reseña"} PepoShots</h2>
         <p><strong>Nombre:</strong> ${escapeHtml(data.name)}</p>
         <p><strong>Email:</strong> ${escapeHtml(data.email)}</p>
         <p><strong>Evento:</strong> ${escapeHtml(data.eventType || "—")}</p>
-        <p><strong>Calificación:</strong> ${escapeHtml(data.rating || "—")} / 5</p>
+        <p><strong>Calificación:</strong> ${data.rating ? `${escapeHtml(data.rating)} / 5` : "—"}</p>
+        <p><strong>Idioma de respuesta:</strong> ${data.language === "en" ? "English" : "Español"}</p>
         <div style="margin-top:18px;padding:14px;background:#f2f9e5;border-radius:12px;white-space:pre-wrap">${escapeHtml(data.text)}</div>
       </div>`,
     attachments: data.attachment ? [data.attachment] : undefined,

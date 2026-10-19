@@ -1,4 +1,12 @@
-# PepoShots — Delivery Ready
+# PepoShots · Español/English y diseño adaptable
+
+Esta versión parte del ZIP revisado por Cami y conserva sus proporciones, animaciones y comentarios. Lee [EMPEZAR_AQUI.md](EMPEZAR_AQUI.md) y [REVISION_FINAL.md](REVISION_FINAL.md). [CAMBIOS_V3.md](CAMBIOS_V3.md) conserva el historial de la preparación local.
+
+---
+
+# Desarrollo y publicación
+
+El repositorio de producción es `Hzmikka/Peposhots`, rama `main`, conectado al proyecto existente `peposhots` de Vercel. La interpretación del boceto está en `DISENO_BOCETO.md` y la guía de tamaños y validación en `RESPONSIVE_REVIEW.md`. Los documentos de versiones anteriores describen su estado cuando eran copias locales.
 
 Sitio mobile-first de PepoShots para explorar tipos de evento, barras, cócteles, trabajo real, cobertura y solicitar disponibilidad/cotización.
 
@@ -7,6 +15,7 @@ Sitio mobile-first de PepoShots para explorar tipos de evento, barras, cócteles
 - `/` — sitio real para clientes. No muestra el marco de teléfono ni la Dynamic Island del portfolio.
 - `/demo` — conserva el mockup móvil original (332×700, canvas de 420 px, escala y Dynamic Island) para portfolio. Esta ruta lleva `noindex`.
 - `/privacy` — aviso de privacidad.
+- `/revision` — panel de tamaños y orientación, disponible solo con `npm run dev`. En producción devuelve 404.
 
 La web real y el demo usan exactamente los mismos componentes y contenido; solo cambia el shell exterior y el origen del scroll.
 
@@ -30,6 +39,8 @@ Comprobaciones:
 ```bash
 npm run check:assets
 npm run typecheck
+npm run test:responsive
+npm run test:journey
 npm run lint
 npm run build
 ```
@@ -45,26 +56,21 @@ El código está preparado para usar:
 
 La App Password NO está incluida en el ZIP.
 
-En Vercel → Project → Settings → Environment Variables añade como mínimo:
-
-```env
-GMAIL_APP_PASSWORD=<tu-app-password-de-16-caracteres>
-```
-
-Opcionalmente puedes declarar también estos valores (ya son los defaults del proyecto):
+En Vercel → Project → Settings → Environment Variables se requieren estos tres valores:
 
 ```env
 EMAIL_FROM=camilahdezb007@gmail.com
 EMAIL_TO=peposchots5@gmail.com
+GMAIL_APP_PASSWORD=<tu-app-password-de-16-caracteres>
 ```
 
 Para canonical/SEO puedes fijar:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://tu-dominio-final.com
+NEXT_PUBLIC_SITE_URL=https://peposhots.com
 ```
 
-Si no se define en Vercel, el proyecto intenta usar `VERCEL_PROJECT_PRODUCTION_URL` automáticamente.
+Sin esta variable, producción usa `https://peposhots.com` y desarrollo usa `http://localhost:3000`.
 
 Nunca uses aquí la contraseña normal de Google, códigos de respaldo, passkeys o llaves de seguridad. Solo la App Password.
 
@@ -76,13 +82,13 @@ Nunca uses aquí la contraseña normal de Google, códigos de respaldo, passkeys
 
 No depende de Google Business Profile. La sección Real Events abre un formulario propio para reseña + foto opcional. `POST /api/review` lo envía a `EMAIL_TO` para moderación. Las fotos se limitan a 3 MB desde cliente y servidor.
 
-Las tres reseñas identificadas como Google son extractos reales sobre el trabajo de Jovel; las demás cards muestran únicamente fotografía real del evento y no inventan testimonios.
+Las fotografías de Real Events son del proyecto original. Los textos identificados como «DEMO · RESEÑA DE MUESTRA» siguen marcados como ejemplos; esta adaptación no los transforma en testimonios verificados.
 
-## Mobile real vs. demo
+## Móvil, tablet, PC y demo
 
-La versión pública `/` usa el scroll real del navegador y ocupa el ancho del dispositivo hasta un máximo de 400 px, equivalente al canvas interno aprobado del demo; en pantallas mayores queda centrada. El CTA “Consultar fecha / Llamar” permanece fijo abajo durante el scroll y se estaciona en su dock final antes del logo.
+La ruta `/` usa el scroll real del navegador y ocupa el ancho disponible. El diseño móvil se conserva por debajo de 600 píxeles CSS útiles. Desde 600 px se reorganiza para tablet; desde 1024 px amplía navegación y distribución para PC. Hay ajustes adicionales a 900 y 1280 px para aprovechar el espacio. En móvil el CTA “Consultar fecha / Llamar” sigue fijo abajo y se estaciona en su dock final; en pantallas amplias lo sustituye la navegación superior con acceso a la reserva.
 
-La ruta `/demo` conserva el frame original para portfolio y sigue usando su scroll interno. Las animaciones del shaker, los saltos a Bar Setups, el booking y el CTA detectan automáticamente cuál de los dos scroll roots está activo.
+La ruta `/demo` conserva el frame original para portfolio y sigue usando su scroll interno. Las consultas de contenedor impiden que la anchura del PC exterior active el diseño de escritorio dentro del teléfono. Las animaciones del shaker, los saltos a Bar Setups, el booking y el CTA detectan automáticamente cuál de los dos scroll roots está activo.
 
 ## Antes de entregar
 
@@ -96,7 +102,7 @@ Después del primer deploy en Vercel:
 6. Prueba `/demo` por separado para confirmar que el portfolio mantiene el frame.
 7. Cuando exista dominio definitivo, configura `NEXT_PUBLIC_SITE_URL` y vuelve a desplegar.
 
-Consulta `DELIVERY_CHECKLIST.md` y `FINAL_QA_REPORT.md` para la pasada final de QA.
+Consulta `RESPONSIVE_REVIEW.md` para las comprobaciones ejecutadas y la revisión visual pendiente.
 
 
 ## Email delivery

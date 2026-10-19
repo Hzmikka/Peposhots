@@ -2,8 +2,8 @@ import type { BusinessConfig } from "@/lib/types";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  (process.env.NODE_ENV === "production"
+    ? "https://peposhots.com"
     : "http://localhost:3000");
 
 export const business: BusinessConfig = {

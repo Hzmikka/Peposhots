@@ -2,6 +2,23 @@ export function getScrollContainer(element: Element | null): HTMLElement | null 
   return element?.closest<HTMLElement>('[data-scroll-container="true"]') ?? null;
 }
 
+// A sticky wide-screen header needs room above the destination. The original
+// phone composition has an absolute header, so its scroll offsets stay intact.
+export function getStickyHeaderHeight(element: HTMLElement) {
+  const shell = element.closest(".page-shell");
+  const header = shell?.querySelector<HTMLElement>(".site-header");
+  if (header && window.getComputedStyle(header).position === "sticky") {
+    return header.offsetHeight;
+  }
+  return 0;
+}
+
+export function getSectionScrollOffset(element: HTMLElement) {
+  const headerHeight = getStickyHeaderHeight(element);
+  if (headerHeight) return headerHeight + 16;
+  return getScrollContainer(element) ? 52 : 12;
+}
+
 export function getScrollTop(container: HTMLElement | null) {
   return container ? container.scrollTop : window.scrollY;
 }

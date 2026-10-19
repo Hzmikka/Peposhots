@@ -8,79 +8,63 @@ export type RealEvent = {
   sample?: boolean;
 };
 
-// Photos are real; review text and author names are fictional demo examples.
+// Event photos with review text supplied by the site owner.
 export const realEvents: RealEvent[] = [
   {
     src: "/images/peposhots/real-events/espresso-martini.webp",
     alt: "Espresso martini servido en un evento real",
     descriptor: "PREPARADO EN EL EVENTO",
-    rating: 5,
-    author: "LAURA M.",
-    sample: true,
-    review: "El espresso martini quedó buenísimo. Lo pedí un poco menos dulce y me lo prepararon como me gusta. Muy buena atención."
+    rating: 0,
+    review: "Contratamos a PepoShots para un cumpleaños en casa y quedamos muy contentos. Los mojitos fueron los favoritos de la noche. El bartender estuvo pendiente de los invitados y mantuvo su espacio organizado. Nos permitió disfrutar de la fiesta sin estar preparando bebidas a cada rato."
   },
   {
     src: "/images/peposhots/real-events/mojito-bar.webp",
     alt: "Cóctel fresco con menta y lima en un evento real",
     descriptor: "CÓCTEL DEL EVENTO",
-    rating: 5,
-    author: "ANDRÉS R.",
-    sample: true,
-    review: "Los mojitos fueron los favoritos de la noche. Se sentía la menta fresca y estaban bien balanceados. Repetiríamos."
+    rating: 0,
+    review: "Era la primera vez que contrataba un servicio de bartender y tenía bastantes dudas con las compras. Me ayudaron a organizar lo que necesitaba y la comunicación fue muy clara. El día del evento todo resultó mucho más sencillo de lo que esperaba."
   },
   {
     src: "/images/peposhots/real-events/spiced-cocktail.webp",
     alt: "Cóctel tropical amarillo preparado en un evento real",
     descriptor: "CÓCTEL DEL EVENTO",
-    rating: 4,
-    author: "DANIELA P.",
-    sample: true,
-    review: "Hicimos un cumpleaños en casa y nos ayudaron con la lista de compras. Todo salió bien; solo habría coordinado el montaje un poco antes."
+    rating: 0,
+    review: "Muy buena atención. Hicimos una reunión pequeña y nos gustó que se tomaran el tiempo de preguntar cómo prefería cada persona su bebida. Pedí una margarita menos dulce y quedó buenísima. Varios amigos me pidieron el contacto."
   },
   {
     src: "/images/peposhots/real-events/shot-service.webp",
     alt: "Presentación de shots durante un evento real",
     descriptor: "SHOTS DEL EVENTO",
-    rating: 5,
-    author: "MARCOS A.",
-    sample: true,
-    review: "Pedimos shots para el brindis y quedaron lindísimos. El bartender súper amable con todos, hasta con los que no sabían qué pedir."
+    rating: 0,
+    review: "Los tuvimos en nuestra boda y nos dejaron una muy buena impresión. Había bastante movimiento en la barra, pero el trato siempre fue amable. Agradecimos especialmente la organización antes del evento, porque teníamos muchas cosas que coordinar."
   },
   {
     src: "/images/peposhots/real-events/lime-highball.webp",
     alt: "Highball con lima servido durante un evento real",
     descriptor: "SERVICIO DE BARRA",
-    rating: 5,
-    author: "ISABEL C.",
-    sample: true,
-    review: "La comunicación fue fácil y llegaron a la hora acordada. Nos explicaron qué alcohol comprar y eso nos quitó bastante trabajo."
+    rating: 0,
+    review: "Reservamos bartender y mesero para una celebración familiar. Tener ayuda con las bebidas y el servicio hizo una diferencia enorme: por una vez pudimos sentarnos a conversar con nuestros invitados. Fueron atentos y estuvieron pendientes de lo que hacía falta."
   },
   {
     src: "/images/peposhots/real-events/mojitos-group.webp",
     alt: "Varios mojitos listos para servir en un evento real",
     descriptor: "SERVICIO PARA INVITADOS",
-    rating: 5,
-    author: "RICARDO L.",
-    sample: true,
-    review: "Éramos casi 100 y me preocupaba la fila. La barra se movió rápido y nadie se quedó esperando demasiado. Los mojitos volaron."
+    rating: 0,
+    review: "La barra quedó muy bonita en el espacio que teníamos preparado. Todo se veía cuidado y combinaba con la decoración. Además de la presentación, los cócteles estuvieron muy buenos; el mojito y la piña colada fueron los que más se pidieron."
   },
   {
     src: "/images/peposhots/real-events/mint-martini.webp",
     alt: "Cóctel verde brillante preparado durante un evento real",
     descriptor: "CÓCTEL DEL EVENTO",
-    rating: 5,
-    author: "ELENA S.",
-    sample: true,
-    review: "No sabía qué pedir y me recomendaron algo fresco, que no fuera tan dulce. Le dieron justo al gusto. ¡Gracias por la paciencia!"
+    rating: 0,
+    review: "Lo que más me gustó fue la claridad desde el principio. Me explicaron qué incluía el servicio y qué debía tener listo yo. Llegamos al día de la fiesta con todo coordinado y pude dedicarme a recibir a mis invitados."
   },
   {
     src: "/images/peposhots/real-events/citrus-foam-martini.webp",
     alt: "Cóctel cremoso de estilo tropical en un evento real",
     descriptor: "PREPARADO EN EL EVENTO",
-    rating: 4,
-    author: "CAROLINA V.",
-    sample: true,
-    review: "Nos encantaron los tragos y la presentación. Para la próxima pondríamos la barra en otro rincón, porque al final todos querían estar ahí."
+    rating: 0,
+    review: "Excelente trato de Jovel y su equipo. Hicimos una fiesta en el patio y estuvieron muy pendientes de nuestros invitados. Me gustó que las bebidas estuvieran equilibradas, con buen sabor. Al terminar, dejaron su área recogida. Los volvería a contratar."
   }
 ];
 

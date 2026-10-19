@@ -21,7 +21,7 @@ export const barSetups: BarSetup[] = [
     id: "classic-white",
     title: "Classic White Bar",
     description: "Limpia, formal y fácil de integrar.",
-    tags: ["Formal", "Indoor / outdoor"],
+    tags: ["Formal", "Interior / exterior"],
     image: "/images/peposhots/bars/classic-white.webp"
   },
   {
@@ -36,14 +36,14 @@ export const barSetups: BarSetup[] = [
     id: "compact-white",
     title: "Compact Setup",
     description: "Para espacios pequeños sin perder servicio.",
-    tags: ["Small space", "Flexible"],
+    tags: ["Espacios pequeños", "Flexible"],
     image: "/images/peposhots/bars/compact-white.webp"
   },
   {
     id: "outdoor-mobile",
     title: "Mobile / Outdoor Bar",
     description: "Cuando el lugar no trae la barra.",
-    tags: ["Outdoor", "No built-in bar"],
+    tags: ["Exterior", "Sin barra instalada"],
     image: "/images/peposhots/bars/outdoor-mobile.webp"
   }
 ];

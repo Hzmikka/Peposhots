@@ -1,9 +1,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { StickyMobileCTA } from "@/components/layout/StickyMobileCTA";
-import { Hero } from "@/components/sections/Hero";
-import { PathBarsScene } from "@/components/sections/PathBarsScene";
-import { DrinksExperience } from "@/components/sections/DrinksExperience";
+import { CocktailJourney } from "@/components/sections/CocktailJourney";
 import { WhatYouBring } from "@/components/sections/WhatYouBring";
 import { RealWorkReviews } from "@/components/sections/RealWorkReviews";
 import { WhereAndWhen } from "@/components/sections/WhereAndWhen";
@@ -12,9 +10,7 @@ import { BookingInquiry } from "@/components/sections/BookingInquiry";
 function SiteSections() {
   return (
     <>
-      <Hero />
-      <PathBarsScene />
-      <DrinksExperience />
+      <CocktailJourney />
       <WhatYouBring />
       <RealWorkReviews />
       <WhereAndWhen />

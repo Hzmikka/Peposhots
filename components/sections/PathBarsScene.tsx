@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useRef } from "react";
 import { EventPaths } from "@/components/sections/EventPaths";
 import { BarSetups } from "@/components/sections/BarSetups";
+import { TABLET_MIN_WIDTH } from "@/lib/responsive";
 import { addScrollListener, getElementTop, getScrollContainer, getScrollTop, getViewportHeight } from "@/lib/scrolling";
 
 export function PathBarsScene() {
@@ -20,10 +21,11 @@ export function PathBarsScene() {
     const shaker = scene.querySelector<HTMLElement>(".path-bars-shaker");
     if (!paths || !bars || !shaker) return;
     let frame = 0;
-    let geometry = { start: 0, end: 1, travel: 0, x: 0 };
+    let geometry = { start: 0, end: 1, travel: 0, x: 0, enabled: true };
 
     const update = () => {
       frame = 0;
+      if (!geometry.enabled) return;
       const progress = reducedMotion.matches
         ? 0.55
         : Math.min(1, Math.max(0, (getScrollTop(scrollRoot) - geometry.start) / Math.max(1, geometry.end - geometry.start)));
@@ -43,6 +45,7 @@ export function PathBarsScene() {
       const barsTop = getElementTop(bars, scrollRoot);
       const landingPoint = barsTop - getElementTop(scene, scrollRoot) + Math.min(bars.offsetHeight * 0.12, scene.clientWidth * 0.175);
       geometry = {
+        enabled: (scene.closest<HTMLElement>(".live-site")?.getBoundingClientRect().width ?? 0) < TABLET_MIN_WIDTH,
         start: getElementTop(paths, scrollRoot) + paths.offsetHeight * 0.32 - viewport * 0.78,
         end: barsTop - viewport * 0.34,
         travel: Math.max(0, landingPoint - shaker.offsetTop - shaker.offsetHeight * 0.48),
